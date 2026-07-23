@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { CaretRight, MapPin } from "@phosphor-icons/react";
+import { CaretRight, Info, MapPin } from "@phosphor-icons/react";
 import { EVENT, getVenue, sortedSessions } from "@/lib/data";
 import {
   formatCountdown,
@@ -19,7 +19,7 @@ import { getAllTowns, getTownTracks } from "@/lib/town-tracker";
 import { formatPatrolStops } from "@/lib/patrol-routes";
 import { getMikoshiStatus } from "@/lib/mikoshi";
 import { SessionCard } from "@/components/session-card";
-import { OverviewSheet } from "@/components/overview-sheet";
+import { PageHeader } from "@/components/page-header";
 import { VenueStatusRow } from "@/components/venue-status-row";
 import { MiniMap, trackKey, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
 import { TimeTravelControl } from "@/components/time-travel-control";
@@ -62,17 +62,21 @@ function HomeContent() {
   const mikoshi = getMikoshiStatus(now);
 
   return (
-    <div className="safe-top space-y-7 px-4 pt-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <p className="text-xs text-muted-foreground">参加者ガイド</p>
-          <h1 className="font-heading text-xl font-medium text-foreground">
-            {EVENT.name}
-          </h1>
-        </div>
-        <OverviewSheet />
-      </header>
-
+    <div>
+      <PageHeader
+        eyebrow="参加者ガイド"
+        title={EVENT.name}
+        action={
+          <Link
+            href="/about"
+            aria-label="長崎くんちとは"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white"
+          >
+            <Info size={20} />
+          </Link>
+        }
+      />
+      <div className="space-y-7 px-4 pt-6">
       <TimeTravelControl />
 
       <section className="space-y-3">
@@ -225,6 +229,7 @@ function HomeContent() {
         </span>
         <CaretRight size={16} className="text-muted-foreground" />
       </Link>
+      </div>
     </div>
   );
 }

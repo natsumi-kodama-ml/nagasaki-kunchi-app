@@ -1,14 +1,12 @@
 import { ArrowSquareOut, MapPin } from "@phosphor-icons/react/ssr";
 import { VENUES } from "@/lib/data";
+import { PageHeader } from "@/components/page-header";
 
 export default function VenuesPage() {
   return (
-    <div className="safe-top space-y-5 px-4 pt-6">
-      <header>
-        <p className="text-xs text-muted-foreground">全{VENUES.length}会場</p>
-        <h1 className="font-heading text-xl font-medium text-foreground">会場・アクセス</h1>
-      </header>
-
+    <div>
+      <PageHeader eyebrow={`全${VENUES.length}会場`} title="会場・アクセス" />
+      <div className="space-y-5 px-4 pt-6">
       <div className="space-y-3 pb-2">
         {VENUES.map((venue) => (
           <div key={venue.id} className="glow-card space-y-3 rounded-2xl bg-card p-4">
@@ -48,6 +46,7 @@ export default function VenuesPage() {
             </a>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

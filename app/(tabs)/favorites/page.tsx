@@ -7,6 +7,7 @@ import { sortedSessions } from "@/lib/data";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { SessionCard } from "@/components/session-card";
+import { PageHeader } from "@/components/page-header";
 
 function FavoritesContent() {
   const now = useNow();
@@ -18,12 +19,9 @@ function FavoritesContent() {
   }
 
   return (
-    <div className="safe-top space-y-5 px-4 pt-6">
-      <header>
-        <p className="text-xs text-muted-foreground">参加予定</p>
-        <h1 className="font-heading text-xl font-medium text-foreground">お気に入り</h1>
-      </header>
-
+    <div>
+      <PageHeader eyebrow="参加予定" title="お気に入り" />
+      <div className="space-y-5 px-4 pt-6">
       {sessions.length === 0 ? (
         <div className="glow-card flex flex-col items-center gap-3 rounded-2xl bg-card px-6 py-12 text-center">
           <Heart size={32} className="text-muted-foreground" />
@@ -51,6 +49,7 @@ function FavoritesContent() {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }

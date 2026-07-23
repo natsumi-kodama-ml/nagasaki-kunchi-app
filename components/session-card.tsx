@@ -46,7 +46,7 @@ export function SessionCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             {isLive ? (
-              <span className="stripe-badge flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+              <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
                 奉納中
               </span>
             ) : (

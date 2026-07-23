@@ -66,7 +66,7 @@ export function VenueStatusRow({
               {status.live ? (
                 <>
                   <div className="mt-1.5">
-                    <span className="stripe-badge inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                    <span className="inline-block rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
                       奉納中
                     </span>
                   </div>

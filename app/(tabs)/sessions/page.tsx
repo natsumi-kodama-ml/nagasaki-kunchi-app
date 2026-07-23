@@ -5,6 +5,7 @@ import { sortedSessions } from "@/lib/data";
 import { formatDateLabel } from "@/lib/time";
 import { useNow } from "@/lib/use-now";
 import { SessionCard } from "@/components/session-card";
+import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 function SessionsContent() {
@@ -22,31 +23,29 @@ function SessionsContent() {
   }
 
   return (
-    <div className="safe-top space-y-5 px-4 pt-6">
-      <header>
-        <p className="text-xs text-muted-foreground">全{sessions.length}演目</p>
-        <h1 className="font-heading text-xl font-medium text-foreground">演目一覧</h1>
-      </header>
+    <div>
+      <PageHeader eyebrow={`全${sessions.length}演目`} title="演目一覧" />
+      <div className="space-y-5 px-4 pt-6">
+        <Tabs defaultValue="1">
+          <TabsList className="w-full bg-card">
+            {dayLabels.map(({ day, label }) => (
+              <TabsTrigger key={day} value={String(day)} className="flex-1">
+                {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-      <Tabs defaultValue="1">
-        <TabsList className="w-full bg-card">
-          {dayLabels.map(({ day, label }) => (
-            <TabsTrigger key={day} value={String(day)} className="flex-1">
-              {label}
-            </TabsTrigger>
+          {dayLabels.map(({ day }) => (
+            <TabsContent key={day} value={String(day)} className="mt-4 space-y-3">
+              {sessions
+                .filter((s) => s.day === day)
+                .map((s) => (
+                  <SessionCard key={s.id} session={s} now={now} />
+                ))}
+            </TabsContent>
           ))}
-        </TabsList>
-
-        {dayLabels.map(({ day }) => (
-          <TabsContent key={day} value={String(day)} className="mt-4 space-y-3">
-            {sessions
-              .filter((s) => s.day === day)
-              .map((s) => (
-                <SessionCard key={s.id} session={s} now={now} />
-              ))}
-          </TabsContent>
-        ))}
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 }

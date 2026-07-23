@@ -71,7 +71,7 @@ function SessionDetailContent() {
           <LanternGlyph className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 text-primary" />
           <div className="relative flex items-center gap-2">
             {status === "live" ? (
-              <span className="stripe-badge flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+              <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
                 奉納中
               </span>
             ) : (
