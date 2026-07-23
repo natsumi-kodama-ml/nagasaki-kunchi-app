@@ -7,6 +7,7 @@ import { getVenue, sortedSessions } from "@/lib/data";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { getTownTrack } from "@/lib/town-tracker";
+import { formatPatrolStops } from "@/lib/patrol-routes";
 import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { SessionCard } from "@/components/session-card";
 import { MiniMap, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
@@ -63,7 +64,7 @@ function FavoritesContent() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-foreground">{t.town}</p>
                     <span className={trackStatusClassName(t.status)}>
-                      {trackStatusLabel(t.status)}
+                      {trackStatusLabel(t.status, t.patrol.length > 0)}
                     </span>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
@@ -73,9 +74,15 @@ function FavoritesContent() {
                         (終了まで{formatCountdown(sessionEnd(t.live), now)})
                       </>
                     )}
-                    {t.status === "transit" && t.next && (
+                    {t.status === "transit" && (
                       <>
-                        次は{getVenue(t.next.venueId)?.name}({formatCountdown(sessionStart(t.next), now)})
+                        {t.patrol.length > 0 && <>{formatPatrolStops(t.patrol)}を回っています・</>}
+                        {t.next && (
+                          <>
+                            次は{getVenue(t.next.venueId)?.name}(
+                            {formatCountdown(sessionStart(t.next), now)})
+                          </>
+                        )}
                       </>
                     )}
                     {t.status === "before" && t.next && (

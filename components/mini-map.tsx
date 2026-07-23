@@ -98,12 +98,12 @@ export function MiniMap({
   );
 }
 
-export function trackStatusLabel(status: TownTrack["status"]): string {
+export function trackStatusLabel(status: TownTrack["status"], hasPatrol?: boolean): string {
   switch (status) {
     case "live":
       return "会場で奉納中";
     case "transit":
-      return "会場間を移動中(推定)";
+      return hasPatrol ? "庭先回り中" : "会場間を移動中(推定)";
     case "before":
       return "奉納前";
     case "done":

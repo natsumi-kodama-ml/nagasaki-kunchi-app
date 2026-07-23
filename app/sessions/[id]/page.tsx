@@ -14,6 +14,7 @@ import {
   sessionStatus,
 } from "@/lib/time";
 import { getWalkMinutes } from "@/lib/geo";
+import { formatPatrolStops, getPatrolRangeByHour } from "@/lib/patrol-routes";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { LanternGlyph } from "@/components/lantern-glyph";
@@ -133,6 +134,14 @@ function SessionDetailContent() {
                 const stopStatus = now ? sessionStatus(stop, now) : "upcoming";
                 const next = townRoute[i + 1];
                 const walk = next ? getWalkMinutes(stop.venueId, next.venueId) : null;
+                const patrolBlocks = next
+                  ? getPatrolRangeByHour(
+                      session.town,
+                      stop.date,
+                      Number(stop.start.split(":")[0]),
+                      Number(next.start.split(":")[0])
+                    )
+                  : [];
                 return (
                   <div key={stop.id}>
                     <div className="flex items-start gap-3">
@@ -158,9 +167,17 @@ function SessionDetailContent() {
                       </div>
                     </div>
                     {walk !== null && (
-                      <p className="ml-[5px] border-l border-dashed border-muted-foreground/30 py-1 pl-[15px] text-[11px] text-muted-foreground">
-                        徒歩約{walk}分
-                      </p>
+                      <div className="ml-[5px] space-y-1 border-l border-dashed border-muted-foreground/30 py-1 pl-[15px] text-[11px] text-muted-foreground">
+                        {patrolBlocks.length > 0 ? (
+                          patrolBlocks.map((b) => (
+                            <p key={b.hour}>
+                              {b.hour}時台 庭先回り: {formatPatrolStops(b.stops)}
+                            </p>
+                          ))
+                        ) : (
+                          <p>徒歩約{walk}分</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 );
