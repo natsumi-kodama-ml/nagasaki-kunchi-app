@@ -75,30 +75,13 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 gap-2">
             {ENJOYMENT_TIPS.map((tip, i) => {
               const Icon = TIP_ICONS[i];
-              const isKasaboko = i === 2;
               return (
-                <div key={tip.title} className="glow-card overflow-hidden rounded-xl bg-card">
-                  {isKasaboko ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src="/images/kasaboko-credit.jpg"
-                      alt="傘鉾(かさぼこ)"
-                      className="h-16 w-full object-cover"
-                    />
-                  ) : (
-                    <Icon size={16} className="ml-2.5 mt-2.5 text-accent" />
-                  )}
-                  <div className="p-2.5 pt-1.5">
-                    <p className="text-xs font-semibold text-foreground">{tip.title}</p>
-                    <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                      {tip.detail}
-                    </p>
-                    {isKasaboko && (
-                      <p className="mt-1 text-[9px] text-muted-foreground/70">
-                        Photo: Houjyou-Minori(CC BY-SA 4.0)
-                      </p>
-                    )}
-                  </div>
+                <div key={tip.title} className="glow-card rounded-xl bg-card p-2.5">
+                  <Icon size={16} className="text-accent" />
+                  <p className="mt-1 text-xs font-semibold text-foreground">{tip.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+                    {tip.detail}
+                  </p>
                 </div>
               );
             })}
