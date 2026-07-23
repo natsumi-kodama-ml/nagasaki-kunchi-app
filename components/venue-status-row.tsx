@@ -73,7 +73,11 @@ export function VenueStatusRow({
                 </div>
               )}
 
-              {status.live ? (
+              {selected ? (
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  「今」は下で確認できます↓
+                </p>
+              ) : status.live ? (
                 <>
                   <div className="mt-1.5">
                     <span className="inline-block rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
