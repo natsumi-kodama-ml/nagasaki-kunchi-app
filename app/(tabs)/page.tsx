@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { EVENT, getVenue, sortedSessions } from "@/lib/data";
 import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { useNow } from "@/lib/use-now";
@@ -23,7 +23,14 @@ function HomeContent() {
   const now = useNow();
   const { favorites } = useFavorites();
   const [selectedTrackKey, setSelectedTrackKey] = useState<string | null>(null);
+  const [highlightedVenueId, setHighlightedVenueId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"venue" | "town">("venue");
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  function jumpToVenueOnMap(venueId: string) {
+    setHighlightedVenueId(venueId);
+    mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
@@ -51,8 +58,6 @@ function HomeContent() {
     <div>
       <PageHeader eyebrow="参加者ガイド" title={`2025年${EVENT.name}`} />
       <div className="space-y-7 px-4 pt-6">
-      <TimeTravelControl />
-
       <section className="space-y-3">
         <div>
           <h2 className="text-sm font-medium text-foreground">今、どこで何が</h2>
@@ -60,15 +65,21 @@ function HomeContent() {
             長崎くんちは1日の中で複数の会場を移動しながら演目が奉納されます。今どこで何が行われているか確認できます。
           </p>
         </div>
-        <MiniMap
-          tracks={allTracks}
-          mikoshiPosition={mikoshi.position}
-          selectedTrackKey={selectedTrackKey}
-          showLegend
-          onSelectTrack={(key) =>
-            setSelectedTrackKey((prev) => (prev === key ? null : key))
-          }
-        />
+
+        <TimeTravelControl />
+
+        <div ref={mapRef}>
+          <MiniMap
+            tracks={allTracks}
+            highlightVenueId={highlightedVenueId}
+            mikoshiPosition={mikoshi.position}
+            selectedTrackKey={selectedTrackKey}
+            showLegend
+            onSelectTrack={(key) =>
+              setSelectedTrackKey((prev) => (prev === key ? null : key))
+            }
+          />
+        </div>
 
         <div className="flex gap-2">
           <button
@@ -98,7 +109,7 @@ function HomeContent() {
         </div>
 
         {viewMode === "venue" ? (
-          <VenueStatusRow statuses={statuses} now={now} />
+          <VenueStatusRow statuses={statuses} now={now} onSelectVenue={jumpToVenueOnMap} />
         ) : (
           <div className="max-h-[380px] space-y-2 overflow-y-auto pr-0.5">
             <div className="glow-card rounded-2xl bg-card p-3">

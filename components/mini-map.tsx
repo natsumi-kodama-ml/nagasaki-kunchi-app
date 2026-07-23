@@ -84,20 +84,24 @@ export function MiniMap({
                 <circle cx={pos.x} cy={pos.y} r={7} fill="transparent" />
               )}
               {active && (
-                <circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={5}
+                <rect
+                  x={pos.x - 3.6}
+                  y={pos.y - 3.6}
+                  width={7.2}
+                  height={7.2}
+                  rx={1.6}
                   fill="none"
                   stroke="var(--primary)"
                   strokeOpacity="0.6"
                   strokeWidth="1"
                 />
               )}
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r={active ? 2.6 : 1.6}
+              <rect
+                x={pos.x - (active ? 2.2 : 1.4)}
+                y={pos.y - (active ? 2.2 : 1.4)}
+                width={active ? 4.4 : 2.8}
+                height={active ? 4.4 : 2.8}
+                rx={active ? 1 : 0.6}
                 fill={getVenueColor(v.id)}
                 opacity={active ? 1 : 0.7}
               />
@@ -113,7 +117,7 @@ export function MiniMap({
                   strokeWidth="3"
                   style={{ paintOrder: "stroke" }}
                 >
-                  ここにいる
+                  {v.name}
                 </text>
               )}
             </g>
@@ -207,7 +211,19 @@ export function MiniMap({
         )}
       </svg>
       {showLegend && (
-        <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1">
+        <div className="mt-2 flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-[2px] bg-foreground/70" />
+            会場
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-foreground/70" />
+            踊町
+          </span>
+        </div>
+      )}
+      {showLegend && (
+        <div className="mt-1.5 flex flex-wrap justify-center gap-x-3 gap-y-1">
           {Object.entries(TOWN_COLORS).map(([town, color]) => (
             <span key={town} className="flex items-center gap-1 text-[10px] text-muted-foreground">
               <span

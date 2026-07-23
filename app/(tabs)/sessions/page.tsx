@@ -34,7 +34,9 @@ function SessionsContent() {
   return (
     <div>
       <PageHeader eyebrow={`全${sessions.length}演目`} title="演目一覧" />
-      <div className="space-y-5 px-4 pt-6">
+      <div className="space-y-4 px-4 pt-6">
+        <div className="space-y-1.5">
+        <p className="text-[11px] font-medium text-muted-foreground">会場で絞る</p>
         <div className="-mx-4 overflow-x-auto px-4">
           <div className="flex gap-2 pb-1">
             <button
@@ -62,7 +64,7 @@ function SessionsContent() {
                 )}
               >
                 <span
-                  className="h-2 w-2 shrink-0 rounded-full"
+                  className="h-2 w-2 shrink-0 rounded-[2px]"
                   style={{
                     backgroundColor:
                       venueFilter === v.id ? "currentColor" : getVenueColor(v.id),
@@ -73,7 +75,10 @@ function SessionsContent() {
             ))}
           </div>
         </div>
+        </div>
 
+        <div className="space-y-1.5">
+        <p className="text-[11px] font-medium text-muted-foreground">踊町で絞る</p>
         <div className="-mx-4 overflow-x-auto px-4">
           <div className="flex gap-2 pb-1">
             <button
@@ -111,6 +116,7 @@ function SessionsContent() {
               </button>
             ))}
           </div>
+        </div>
         </div>
 
         <Tabs defaultValue="1">

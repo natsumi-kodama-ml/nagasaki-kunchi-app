@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { VenueStatus } from "@/lib/venue-status";
 import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { getVenueColor } from "@/lib/venue-colors";
@@ -9,25 +8,31 @@ import { cn } from "@/lib/utils";
 export function VenueStatusRow({
   statuses,
   now,
+  onSelectVenue,
 }: {
   statuses: VenueStatus[];
   now: Date;
+  onSelectVenue: (venueId: string) => void;
 }) {
   return (
     <div className="space-y-2">
       {statuses.map((status) => {
-        const session = status.live ?? status.next;
         const className = cn(
           "block w-full rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.98]",
           status.live ? "glow-primary" : "glow-card"
         );
 
-        const content = (
-          <>
+        return (
+          <button
+            key={status.venue.id}
+            type="button"
+            onClick={() => onSelectVenue(status.venue.id)}
+            className={className}
+          >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
                 <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                  className="h-2.5 w-2.5 shrink-0 rounded-[3px]"
                   style={{ backgroundColor: getVenueColor(status.venue.id) }}
                 />
                 {status.venue.name}
@@ -56,17 +61,7 @@ export function VenueStatusRow({
               )}
               {!status.live && !status.next && "本日の奉納はすべて終了しました"}
             </p>
-          </>
-        );
-
-        return session ? (
-          <Link key={status.venue.id} href={`/sessions/${session.id}`} className={className}>
-            {content}
-          </Link>
-        ) : (
-          <div key={status.venue.id} className={className}>
-            {content}
-          </div>
+          </button>
         );
       })}
     </div>
