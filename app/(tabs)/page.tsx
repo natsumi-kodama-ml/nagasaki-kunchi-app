@@ -95,7 +95,7 @@ function HomeContent() {
         className="glow-card flex items-center justify-between rounded-2xl bg-card p-4"
       >
         <span className="flex items-center gap-2 text-sm text-foreground">
-          <MapPin size={18} className="text-accent" />
+          <MapPin size={18} className="text-info" />
           会場・アクセスを確認する
         </span>
         <CaretRight size={16} className="text-muted-foreground" />

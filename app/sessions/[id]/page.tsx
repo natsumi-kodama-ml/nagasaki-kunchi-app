@@ -171,7 +171,7 @@ function SessionDetailContent() {
 
         <Link href="/venues" className="glow-card flex items-center justify-between rounded-2xl bg-card p-4">
           <span className="text-sm text-foreground">会場・アクセスを見る</span>
-          <MapPin size={16} className="text-accent" />
+          <MapPin size={16} className="text-info" />
         </Link>
       </div>
 
