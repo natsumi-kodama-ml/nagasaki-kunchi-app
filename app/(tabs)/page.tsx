@@ -11,10 +11,11 @@ import { getVenueStatuses } from "@/lib/venue-status";
 import { SessionCard } from "@/components/session-card";
 import { OverviewSheet } from "@/components/overview-sheet";
 import { VenueStatusRow } from "@/components/venue-status-row";
+import { MiniMap } from "@/components/mini-map";
 
 function HomeContent() {
   const now = useNow();
-  const { venueId } = useLocation();
+  const { venueId, setVenueId } = useLocation();
 
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
@@ -47,6 +48,7 @@ function HomeContent() {
             今いる(または行きたい)会場をタップすると、そこでの「今・次」が下に出ます
           </p>
         </div>
+        <MiniMap tracks={[]} highlightVenueId={venueId} onSelectVenue={setVenueId} />
         <VenueStatusRow statuses={statuses} now={now} />
       </section>
 

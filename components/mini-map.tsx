@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 export function MiniMap({
   tracks,
   highlightVenueId,
+  onSelectVenue,
 }: {
   tracks: (TownTrack & { color?: "primary" | "accent" })[];
   highlightVenueId?: string | null;
+  onSelectVenue?: (venueId: string) => void;
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
@@ -26,20 +28,39 @@ export function MiniMap({
           if (!pos) return null;
           const active = v.id === highlightVenueId;
           return (
-            <g key={v.id}>
+            <g
+              key={v.id}
+              onClick={onSelectVenue ? () => onSelectVenue(v.id) : undefined}
+              className={onSelectVenue ? "cursor-pointer" : undefined}
+            >
+              {onSelectVenue && (
+                <circle cx={pos.x} cy={pos.y} r={7} fill="transparent" />
+              )}
+              {active && (
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={5}
+                  fill="none"
+                  stroke="var(--primary)"
+                  strokeOpacity="0.4"
+                  strokeWidth="0.8"
+                />
+              )}
               <circle
                 cx={pos.x}
                 cy={pos.y}
                 r={active ? 3.2 : 2.2}
-                fill="var(--muted-foreground)"
-                opacity={active ? 0.9 : 0.5}
+                fill={active ? "var(--primary)" : "var(--muted-foreground)"}
+                opacity={active ? 1 : 0.5}
               />
               <text
                 x={pos.x}
                 y={pos.y - 4.5}
                 fontSize="4"
+                fontWeight={active ? 700 : 400}
                 textAnchor="middle"
-                fill="var(--muted-foreground)"
+                fill={active ? "var(--primary)" : "var(--muted-foreground)"}
               >
                 {v.name.replace("会場", "")}
               </text>
