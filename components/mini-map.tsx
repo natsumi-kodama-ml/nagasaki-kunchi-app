@@ -85,11 +85,11 @@ export function MiniMap({
               )}
               {active && (
                 <rect
-                  x={pos.x - 3.6}
-                  y={pos.y - 3.6}
-                  width={7.2}
-                  height={7.2}
-                  rx={1.6}
+                  x={pos.x - 4.4}
+                  y={pos.y - 4.4}
+                  width={8.8}
+                  height={8.8}
+                  rx={1.8}
                   fill="none"
                   stroke="var(--primary)"
                   strokeOpacity="0.6"
@@ -97,13 +97,13 @@ export function MiniMap({
                 />
               )}
               <rect
-                x={pos.x - (active ? 2.2 : 1.4)}
-                y={pos.y - (active ? 2.2 : 1.4)}
-                width={active ? 4.4 : 2.8}
-                height={active ? 4.4 : 2.8}
-                rx={active ? 1 : 0.6}
+                x={pos.x - (active ? 2.9 : 2)}
+                y={pos.y - (active ? 2.9 : 2)}
+                width={active ? 5.8 : 4}
+                height={active ? 5.8 : 4}
+                rx={active ? 1.3 : 0.9}
                 fill={getVenueColor(v.id)}
-                opacity={active ? 1 : 0.7}
+                opacity={active ? 1 : 0.85}
               />
               {active && (
                 <text
