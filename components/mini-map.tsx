@@ -7,10 +7,12 @@ export function MiniMap({
   tracks,
   highlightVenueId,
   onSelectVenue,
+  mikoshiPosition,
 }: {
   tracks: (TownTrack & { color?: "primary" | "accent" | "info" })[];
   highlightVenueId?: string | null;
   onSelectVenue?: (venueId: string) => void;
+  mikoshiPosition?: { x: number; y: number } | null;
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
@@ -96,6 +98,38 @@ export function MiniMap({
             />
           </g>
         ))}
+
+        {mikoshiPosition && (
+          <g>
+            <circle
+              cx={mikoshiPosition.x}
+              cy={mikoshiPosition.y}
+              r={4.2}
+              fill="none"
+              stroke="var(--chart-4)"
+              strokeOpacity="0.5"
+              strokeWidth="0.8"
+            />
+            <rect
+              x={mikoshiPosition.x - 1.8}
+              y={mikoshiPosition.y - 1.8}
+              width={3.6}
+              height={3.6}
+              fill="var(--chart-4)"
+              transform={`rotate(45 ${mikoshiPosition.x} ${mikoshiPosition.y})`}
+            />
+            <text
+              x={mikoshiPosition.x}
+              y={mikoshiPosition.y + 7}
+              fontSize="3.6"
+              fontWeight={700}
+              textAnchor="middle"
+              fill="var(--chart-4)"
+            >
+              御神輿
+            </text>
+          </g>
+        )}
       </svg>
       <p className="mt-1 text-center text-[10px] text-muted-foreground">
         地図はイメージです(実際の地理・距離とは異なります)

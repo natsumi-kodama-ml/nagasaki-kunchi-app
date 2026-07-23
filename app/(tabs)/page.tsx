@@ -17,6 +17,7 @@ import { useFavorites } from "@/lib/favorites-context";
 import { getVenueStatuses } from "@/lib/venue-status";
 import { getAllTowns, getTownTrack } from "@/lib/town-tracker";
 import { formatPatrolStops } from "@/lib/patrol-routes";
+import { getMikoshiStatus } from "@/lib/mikoshi";
 import { SessionCard } from "@/components/session-card";
 import { OverviewSheet } from "@/components/overview-sheet";
 import { VenueStatusRow } from "@/components/venue-status-row";
@@ -55,6 +56,8 @@ function HomeContent() {
       return aTime - bTime;
     });
 
+  const mikoshi = getMikoshiStatus(now);
+
   return (
     <div className="safe-top space-y-7 px-4 pt-6">
       <header className="flex items-center justify-between">
@@ -81,6 +84,7 @@ function HomeContent() {
           }))}
           highlightVenueId={venueId}
           onSelectVenue={setVenueId}
+          mikoshiPosition={mikoshi.position}
         />
         <VenueStatusRow statuses={statuses} now={now} />
       </section>
@@ -93,6 +97,15 @@ function HomeContent() {
           </p>
         </div>
         <div className="space-y-2">
+          <div className="glow-card rounded-2xl bg-card p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-foreground">御神輿(本社神輿)</span>
+              <span className="text-[11px] font-medium" style={{ color: "var(--chart-4)" }}>
+                {mikoshi.label}
+              </span>
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">{mikoshi.detail}</p>
+          </div>
           {allTracks.map((t) => (
             <div key={t.town} className="glow-card rounded-2xl bg-card p-3">
               <div className="flex items-center justify-between">
