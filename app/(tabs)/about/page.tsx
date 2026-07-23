@@ -6,6 +6,34 @@ import { PageHeader } from "@/components/page-header";
 
 const TIP_ICONS = [MapPin, Megaphone, Umbrella, Sparkle, CloudRain];
 
+const TOWN_PHOTOS: Record<string, { src: string; alt: string; credit: string }> = {
+  shinbashi: {
+    src: "/images/dance-credit.jpg",
+    alt: "本踊のような奉納踊り",
+    credit: "Marufish(CC BY-SA 2.0)",
+  },
+  shindaiku: {
+    src: "/images/float-credit.jpg",
+    alt: "曳壇尻のような山車",
+    credit: "Masoud Akbari(CC BY-SA 3.0)",
+  },
+  enokizu: {
+    src: "/images/ebisu-boat-credit.jpg",
+    alt: "川船のような祝船",
+    credit: "Marine-Blue(CC BY-SA 4.0)",
+  },
+  nishikogawa: {
+    src: "/images/shagiri-credit.jpg",
+    alt: "囃子方(太鼓の演奏)",
+    credit: "Marine-Blue(CC BY-SA 4.0)",
+  },
+  nigiwai: {
+    src: "/images/ebisu-boat-credit.jpg",
+    alt: "恵美須船のような祝船",
+    credit: "Marine-Blue(CC BY-SA 4.0)",
+  },
+};
+
 export default function AboutPage() {
   return (
     <div>
@@ -94,12 +122,7 @@ export default function AboutPage() {
             {TOWN_PROFILES.map((town) => {
               const color = getTownColor(town.name);
               const icons = getPerformanceIcons(town.program);
-              const photo =
-                town.id === "nigiwai"
-                  ? { src: "/images/ebisu-boat-credit.jpg", alt: "恵美須船のような祝船", credit: "Marine-Blue(CC BY-SA 4.0)" }
-                  : town.id === "nishikogawa"
-                    ? { src: "/images/shagiri-credit.jpg", alt: "囃子方(太鼓の演奏)", credit: "Marine-Blue(CC BY-SA 4.0)" }
-                    : null;
+              const photo = TOWN_PHOTOS[town.id] ?? null;
               return (
                 <div key={town.id} className="glow-card overflow-hidden rounded-xl bg-card">
                   {photo && (

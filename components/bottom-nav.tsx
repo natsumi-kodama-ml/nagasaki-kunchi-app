@@ -6,11 +6,11 @@ import { House, Info, ListBullets, Heart, MapPin } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
+  { href: "/about", label: "概要", icon: Info },
+  { href: "/venues", label: "会場", icon: MapPin },
   { href: "/", label: "ホーム", icon: House },
   { href: "/sessions", label: "演目", icon: ListBullets },
   { href: "/favorites", label: "お気に入り", icon: Heart },
-  { href: "/venues", label: "会場", icon: MapPin },
-  { href: "/about", label: "概要", icon: Info },
 ];
 
 export function BottomNav() {
