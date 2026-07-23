@@ -15,7 +15,7 @@ import { useNow } from "@/lib/use-now";
 import { useLocation } from "@/lib/location-context";
 import { useFavorites } from "@/lib/favorites-context";
 import { getVenueStatuses } from "@/lib/venue-status";
-import { getAllTowns, getTownTrack } from "@/lib/town-tracker";
+import { getAllTowns, getTownTracks } from "@/lib/town-tracker";
 import { formatPatrolStops } from "@/lib/patrol-routes";
 import { getMikoshiStatus } from "@/lib/mikoshi";
 import { SessionCard } from "@/components/session-card";
@@ -47,7 +47,7 @@ function HomeContent() {
     sessions.filter((s) => favorites.has(s.id)).map((s) => s.town)
   );
   const allTracks = getAllTowns()
-    .map((town) => getTownTrack(town, now))
+    .flatMap((town) => getTownTracks(town, now))
     .sort((a, b) => {
       const rankDiff = TRACK_RANK[a.status] - TRACK_RANK[b.status];
       if (rankDiff !== 0) return rankDiff;
@@ -107,10 +107,16 @@ function HomeContent() {
             <p className="mt-0.5 text-xs text-muted-foreground">{mikoshi.detail}</p>
           </div>
           {allTracks.map((t) => (
-            <div key={t.town} className="glow-card rounded-2xl bg-card p-3">
+            <div
+              key={`${t.town}-${t.groupLabel ?? ""}`}
+              className="glow-card rounded-2xl bg-card p-3"
+            >
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
                   {t.town}
+                  {t.groupLabel && (
+                    <span className="text-xs text-muted-foreground">({t.groupLabel})</span>
+                  )}
                   {favoriteTowns.has(t.town) && (
                     <Heart size={12} weight="fill" className="text-primary" />
                   )}

@@ -71,7 +71,7 @@ export function MiniMap({
         })}
 
         {tracks.map((t) => (
-          <g key={t.town}>
+          <g key={`${t.town}-${t.groupLabel ?? ""}`}>
             {t.status === "live" && (
               <circle
                 cx={t.position.x}

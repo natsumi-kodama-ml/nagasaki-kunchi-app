@@ -8,6 +8,7 @@ export type TownTrackStatus = "live" | "transit" | "before" | "done";
 
 export type TownTrack = {
   town: string;
+  groupLabel: string | null;
   status: TownTrackStatus;
   position: { x: number; y: number };
   live: Session | null;
@@ -22,7 +23,9 @@ export function getAllTowns(): string[] {
   return [...names];
 }
 
-export function getTownTrack(town: string, now: Date): TownTrack {
+// くんちナビと同様、庭先回り中は町がグループ(花組/月組など)ごとに別行動する場合
+// グループ単位で別々のトラック(ピン)を返す。合流中(本場所)は1つにまとめる。
+export function getTownTracks(town: string, now: Date): TownTrack[] {
   const sessions = sortedSessions().filter((s) => s.town === town);
 
   const live = sessions.find((s) => sessionStatus(s, now) === "live") ?? null;
@@ -31,15 +34,18 @@ export function getTownTrack(town: string, now: Date): TownTrack {
   const next = sessions.find((s) => sessionStatus(s, now) === "upcoming") ?? null;
 
   if (live) {
-    return {
-      town,
-      status: "live",
-      position: VENUE_POSITIONS[live.venueId] ?? { x: 50, y: 50 },
-      live,
-      prev,
-      next,
-      patrol: [],
-    };
+    return [
+      {
+        town,
+        groupLabel: null,
+        status: "live",
+        position: VENUE_POSITIONS[live.venueId] ?? { x: 50, y: 50 },
+        live,
+        prev,
+        next,
+        patrol: [],
+      },
+    ];
   }
 
   if (prev && next) {
@@ -49,39 +55,59 @@ export function getTownTrack(town: string, now: Date): TownTrack {
     const from = VENUE_POSITIONS[prev.venueId] ?? { x: 50, y: 50 };
     const to = VENUE_POSITIONS[next.venueId] ?? { x: 50, y: 50 };
     const patrol = getPatrolStops(town, prev.date, jstHour(now));
-    const hubPosition = patrol
-      .map((p) => findHubPosition(p.route))
-      .find((pos) => pos !== null);
-    return {
+
+    if (patrol.length === 0) {
+      return [
+        {
+          town,
+          groupLabel: null,
+          status: "transit",
+          position: lerpPosition(from, to, t),
+          live: null,
+          prev,
+          next,
+          patrol: [],
+        },
+      ];
+    }
+
+    return patrol.map((stop) => ({
       town,
-      status: "transit",
-      position: hubPosition ?? lerpPosition(from, to, t),
+      groupLabel: stop.group,
+      status: "transit" as const,
+      position: findHubPosition(stop.route) ?? lerpPosition(from, to, t),
       live: null,
       prev,
       next,
-      patrol,
-    };
+      patrol: [stop],
+    }));
   }
 
   if (next && !prev) {
-    return {
-      town,
-      status: "before",
-      position: VENUE_POSITIONS[next.venueId] ?? { x: 50, y: 50 },
-      live: null,
-      prev: null,
-      next,
-      patrol: [],
-    };
+    return [
+      {
+        town,
+        groupLabel: null,
+        status: "before",
+        position: VENUE_POSITIONS[next.venueId] ?? { x: 50, y: 50 },
+        live: null,
+        prev: null,
+        next,
+        patrol: [],
+      },
+    ];
   }
 
-  return {
-    town,
-    status: "done",
-    position: prev ? VENUE_POSITIONS[prev.venueId] ?? { x: 50, y: 50 } : { x: 50, y: 50 },
-    live: null,
-    prev,
-    next: null,
-    patrol: [],
-  };
+  return [
+    {
+      town,
+      groupLabel: null,
+      status: "done",
+      position: prev ? VENUE_POSITIONS[prev.venueId] ?? { x: 50, y: 50 } : { x: 50, y: 50 },
+      live: null,
+      prev,
+      next: null,
+      patrol: [],
+    },
+  ];
 }
