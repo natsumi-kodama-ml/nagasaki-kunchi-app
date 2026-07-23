@@ -116,37 +116,37 @@ function HomeContent() {
         </div>
 
         {viewMode === "venue" ? (
-          <div className="space-y-4">
-            <div className="glow-card space-y-3 rounded-2xl bg-card p-3">
-              <VenueStatusRow statuses={statuses} now={now} />
+          <div className="glow-card space-y-3 rounded-2xl bg-card p-3">
+            <VenueStatusRow statuses={statuses} now={now} />
 
-              {selected && (
-                <div className="space-y-2 border-t border-border pt-3">
-                  <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                    ↑ ここにいる{selected.venue.name}の様子
-                  </p>
-                  {selected.live ? (
-                    <SessionCard session={selected.live} now={now} variant="live" />
-                  ) : selected.next ? (
-                    <SessionCard session={selected.next} now={now} />
-                  ) : (
-                    <div className="rounded-2xl bg-secondary/60 p-4">
-                      <p className="text-sm text-foreground/90">
-                        {selected.venue.name}での奉納はすべて終了しました
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        他の会場をタップすると、そこでの「今・次」を確認できます
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            {selected && (
+              <div className="space-y-2 border-t border-border pt-3">
+                <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                  ↑ ここにいる{selected.venue.name}の様子
+                </p>
+                {selected.live ? (
+                  <SessionCard session={selected.live} now={now} variant="live" />
+                ) : selected.next ? (
+                  <SessionCard session={selected.next} now={now} />
+                ) : (
+                  <div className="rounded-2xl bg-secondary/60 p-4">
+                    <p className="text-sm text-foreground/90">
+                      {selected.venue.name}での奉納はすべて終了しました
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      他の会場をタップすると、そこでの「今・次」を確認できます
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {upcoming.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 border-t border-border pt-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium text-muted-foreground">次の予定</h3>
+                  <h3 className="text-[11px] text-muted-foreground">
+                    ほかの会場の次の予定
+                  </h3>
                   <Link
                     href="/sessions"
                     className="flex items-center gap-0.5 text-xs text-info"
