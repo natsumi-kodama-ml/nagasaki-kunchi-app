@@ -3,14 +3,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Heart, ListBullets } from "@phosphor-icons/react";
-import { getVenue, sortedSessions } from "@/lib/data";
+import { sortedSessions } from "@/lib/data";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
-import { getTownTrack } from "@/lib/town-tracker";
-import { formatPatrolStops } from "@/lib/patrol-routes";
-import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { SessionCard } from "@/components/session-card";
-import { MiniMap, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
 
 function FavoritesContent() {
   const now = useNow();
@@ -20,9 +16,6 @@ function FavoritesContent() {
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
   }
-
-  const favoriteTowns = [...new Set(sessions.map((s) => s.town))];
-  const tracks = favoriteTowns.map((town) => getTownTrack(town, now));
 
   return (
     <div className="safe-top space-y-5 px-4 pt-6">
@@ -48,63 +41,14 @@ function FavoritesContent() {
         </div>
       ) : (
         <>
-          <section className="space-y-3">
-            <div>
-              <h2 className="text-sm font-medium text-foreground">
-                お気に入りの踊町は今どこ?
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                会場間の移動時間から推定した、現在の位置イメージです
-              </p>
-            </div>
-            <MiniMap tracks={tracks} />
-            <div className="space-y-2">
-              {tracks.map((t) => (
-                <div key={t.town} className="glow-card rounded-2xl bg-card p-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground">{t.town}</p>
-                    <span className={trackStatusClassName(t.status)}>
-                      {trackStatusLabel(t.status, t.patrol.length > 0)}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {t.status === "live" && t.live && (
-                      <>
-                        {getVenue(t.live.venueId)?.name} で{t.live.title}
-                        (終了まで{formatCountdown(sessionEnd(t.live), now)})
-                      </>
-                    )}
-                    {t.status === "transit" && (
-                      <>
-                        {t.patrol.length > 0 && <>{formatPatrolStops(t.patrol)}を回っています・</>}
-                        {t.next && (
-                          <>
-                            次は{getVenue(t.next.venueId)?.name}(
-                            {formatCountdown(sessionStart(t.next), now)})
-                          </>
-                        )}
-                      </>
-                    )}
-                    {t.status === "before" && t.next && (
-                      <>
-                        最初の奉納は{getVenue(t.next.venueId)?.name}({formatCountdown(sessionStart(t.next), now)})
-                      </>
-                    )}
-                    {t.status === "done" && "また来年の奉納をお楽しみに"}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-sm font-medium text-muted-foreground">お気に入り一覧</h2>
-            <div className="space-y-3">
-              {sessions.map((s) => (
-                <SessionCard key={s.id} session={s} now={now} />
-              ))}
-            </div>
-          </section>
+          <p className="text-xs text-muted-foreground">
+            お気に入りの踊町が今どこにいるかは、ホームのマップで確認できます
+          </p>
+          <div className="space-y-3">
+            {sessions.map((s) => (
+              <SessionCard key={s.id} session={s} now={now} />
+            ))}
+          </div>
         </>
       )}
     </div>

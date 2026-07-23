@@ -8,7 +8,7 @@ export function MiniMap({
   highlightVenueId,
   onSelectVenue,
 }: {
-  tracks: (TownTrack & { color?: "primary" | "accent" })[];
+  tracks: (TownTrack & { color?: "primary" | "accent" | "info" })[];
   highlightVenueId?: string | null;
   onSelectVenue?: (venueId: string) => void;
 }) {
@@ -85,7 +85,13 @@ export function MiniMap({
               cx={t.position.x}
               cy={t.position.y}
               r={2.4}
-              fill={t.color === "accent" ? "var(--accent)" : "var(--primary)"}
+              fill={
+                t.color === "accent"
+                  ? "var(--accent)"
+                  : t.color === "info"
+                    ? "var(--info)"
+                    : "var(--primary)"
+              }
               opacity={t.status === "done" ? 0.4 : 1}
             />
           </g>
