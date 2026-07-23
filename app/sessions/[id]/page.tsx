@@ -15,9 +15,11 @@ import {
 } from "@/lib/time";
 import { getWalkMinutes } from "@/lib/geo";
 import { formatPatrolStops, getPatrolRangeByHour } from "@/lib/patrol-routes";
+import { getTownTracks } from "@/lib/town-tracker";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { LanternGlyph } from "@/components/lantern-glyph";
+import { MiniMap } from "@/components/mini-map";
 import { cn } from "@/lib/utils";
 
 function SessionDetailContent() {
@@ -36,6 +38,7 @@ function SessionDetailContent() {
   const townRoute = sortedSessions().filter(
     (s) => s.town === session.town && s.date === session.date
   );
+  const townTracks = now ? getTownTracks(session.town, now) : [];
 
   return (
     <div className="mx-auto min-h-screen max-w-md pb-28">
@@ -129,6 +132,7 @@ function SessionDetailContent() {
             <h2 className="text-sm font-medium text-muted-foreground">
               {session.town}の本日のルート
             </h2>
+            {townTracks.length > 0 && <MiniMap tracks={townTracks} />}
             <div className="glow-card rounded-2xl bg-card p-4">
               {townRoute.map((stop, i) => {
                 const stopStatus = now ? sessionStatus(stop, now) : "upcoming";

@@ -1,5 +1,6 @@
 import { VENUE_POSITIONS } from "@/lib/geo";
 import { VENUES } from "@/lib/data";
+import { getTownColor, TOWN_COLORS } from "@/lib/town-colors";
 import type { TownTrack } from "@/lib/town-tracker";
 import { cn } from "@/lib/utils";
 
@@ -14,13 +15,15 @@ export function MiniMap({
   mikoshiPosition,
   selectedTrackKey,
   onSelectTrack,
+  showLegend,
 }: {
-  tracks: (TownTrack & { color?: "primary" | "accent" | "info" })[];
+  tracks: TownTrack[];
   highlightVenueId?: string | null;
   onSelectVenue?: (venueId: string) => void;
   mikoshiPosition?: { x: number; y: number } | null;
   selectedTrackKey?: string | null;
   onSelectTrack?: (key: string) => void;
+  showLegend?: boolean;
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
@@ -72,12 +75,7 @@ export function MiniMap({
         {tracks.map((t) => {
           const key = trackKey(t);
           const selected = key === selectedTrackKey;
-          const fill =
-            t.color === "accent"
-              ? "var(--accent)"
-              : t.color === "info"
-                ? "var(--info)"
-                : "var(--primary)";
+          const fill = getTownColor(t.town);
           return (
             <g
               key={key}
@@ -160,6 +158,19 @@ export function MiniMap({
           </g>
         )}
       </svg>
+      {showLegend && (
+        <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1">
+          {Object.entries(TOWN_COLORS).map(([town, color]) => (
+            <span key={town} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              {town}
+            </span>
+          ))}
+        </div>
+      )}
       <p className="mt-1 text-center text-[10px] text-muted-foreground">
         公式の庭先回りMAPを使用。位置は披露時刻・経由地からの推定です
       </p>

@@ -83,14 +83,12 @@ function HomeContent() {
           </p>
         </div>
         <MiniMap
-          tracks={allTracks.map((t) => ({
-            ...t,
-            color: favoriteTowns.has(t.town) ? ("primary" as const) : ("info" as const),
-          }))}
+          tracks={allTracks}
           highlightVenueId={venueId}
           onSelectVenue={setVenueId}
           mikoshiPosition={mikoshi.position}
           selectedTrackKey={selectedTrackKey}
+          showLegend
           onSelectTrack={(key) =>
             setSelectedTrackKey((prev) => (prev === key ? null : key))
           }
