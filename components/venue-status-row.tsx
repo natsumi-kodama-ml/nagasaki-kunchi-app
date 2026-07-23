@@ -17,6 +17,7 @@ export function VenueStatusRow({
   now: Date;
 }) {
   const { venueId, setVenueId } = useLocation();
+  const originVenue = statuses.find((s) => s.venue.id === venueId)?.venue ?? null;
 
   useEffect(() => {
     if (!venueId && statuses.length > 0) {
@@ -25,8 +26,12 @@ export function VenueStatusRow({
   }, [venueId, statuses, setVenueId]);
 
   return (
-    <div className="-mx-4 overflow-x-auto px-4">
-      <div className="flex gap-2.5 pb-1">
+    <div className="space-y-1.5">
+      <p className="text-[11px] text-muted-foreground">
+        会場をタップすると「ここにいる」に設定され、他の会場までの徒歩時間が表示されます
+      </p>
+      <div className="-mx-4 overflow-x-auto px-4">
+        <div className="flex gap-2.5 pb-1">
         {statuses.map((status) => {
           const selected = status.venue.id === venueId;
           const walkMin = venueId ? getWalkMinutes(venueId, status.venue.id) : 0;
@@ -41,8 +46,8 @@ export function VenueStatusRow({
               type="button"
               onClick={() => setVenueId(status.venue.id)}
               className={cn(
-                "w-[168px] shrink-0 rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.97]",
-                selected ? "glow-primary ring-2 ring-primary" : "glow-card"
+                "w-[168px] shrink-0 rounded-2xl p-3 text-left transition-transform active:scale-[0.97]",
+                selected ? "glow-primary bg-card ring-2 ring-primary" : "bg-secondary/70"
               )}
             >
               <div className="flex items-center gap-1.5">
@@ -55,7 +60,7 @@ export function VenueStatusRow({
                 </span>
                 {selected && (
                   <span className="ml-auto shrink-0 text-[10px] font-medium text-primary">
-                    出発地
+                    ここにいる
                   </span>
                 )}
               </div>
@@ -63,7 +68,7 @@ export function VenueStatusRow({
               {!selected && (
                 <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
                   <PersonSimpleWalk size={12} />
-                  出発地から徒歩{walkMin}分
+                  {originVenue?.name}から徒歩{walkMin}分
                   {reachable === true && (
                     <span className="text-accent">・間に合う</span>
                   )}
@@ -73,11 +78,7 @@ export function VenueStatusRow({
                 </div>
               )}
 
-              {selected ? (
-                <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  「今」は下で確認できます↓
-                </p>
-              ) : status.live ? (
+              {selected ? null : status.live ? (
                 <>
                   <div className="mt-1.5">
                     <span className="inline-block rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
@@ -111,6 +112,7 @@ export function VenueStatusRow({
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );
