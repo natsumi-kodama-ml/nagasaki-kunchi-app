@@ -22,6 +22,7 @@ import { SessionCard } from "@/components/session-card";
 import { OverviewSheet } from "@/components/overview-sheet";
 import { VenueStatusRow } from "@/components/venue-status-row";
 import { MiniMap, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
+import { TimeTravelControl } from "@/components/time-travel-control";
 import { Heart } from "@phosphor-icons/react";
 
 const TRACK_RANK: Record<string, number> = { live: 0, transit: 1, before: 2, done: 3 };
@@ -69,6 +70,8 @@ function HomeContent() {
         </div>
         <OverviewSheet />
       </header>
+
+      <TimeTravelControl />
 
       <section className="space-y-3">
         <div>
