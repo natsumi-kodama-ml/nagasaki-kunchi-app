@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapPin, PersonSimpleWalk } from "@phosphor-icons/react";
+import { PersonSimpleWalk } from "@phosphor-icons/react";
 import type { VenueStatus } from "@/lib/venue-status";
 import { formatCountdown, minutesUntil, sessionEnd, sessionStart } from "@/lib/time";
 import { getWalkMinutes } from "@/lib/geo";
@@ -44,10 +44,21 @@ export function VenueStatusRow({
                 selected ? "glow-primary" : "glow-card"
               )}
             >
-              <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                <MapPin size={12} className={selected ? "text-primary" : ""} />
-                <span className="truncate">{status.venue.name}</span>
-                {selected && <span className="ml-auto text-[10px] text-primary">現在地</span>}
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "h-2.5 w-2.5 shrink-0 rounded-full",
+                    selected ? "bg-primary" : "bg-muted-foreground"
+                  )}
+                />
+                <span className="truncate text-sm font-semibold text-foreground">
+                  {status.venue.name}
+                </span>
+                {selected && (
+                  <span className="ml-auto shrink-0 text-[10px] font-medium text-primary">
+                    現在地
+                  </span>
+                )}
               </div>
 
               {!selected && (

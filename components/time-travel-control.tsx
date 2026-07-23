@@ -75,7 +75,7 @@ export function TimeTravelControl() {
       >
         <span className="flex items-center gap-2 text-sm font-medium text-foreground">
           <Clock size={16} className="text-info" />
-          時刻を変更して見る(テスト用)
+          時刻を変更して見る
         </span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
           {demoNow ? `${DAYS.find((d) => d.date === day)?.label ?? ""} ${formatMinutes(minutes)}` : "リアルタイム"}

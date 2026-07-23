@@ -65,7 +65,7 @@ function HomeContent() {
 
   return (
     <div>
-      <PageHeader eyebrow="参加者ガイド" title={EVENT.name} />
+      <PageHeader eyebrow="参加者ガイド" title={`2025年${EVENT.name}`} />
       <div className="space-y-7 px-4 pt-6">
       <TimeTravelControl />
 
