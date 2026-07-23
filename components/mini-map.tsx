@@ -34,6 +34,7 @@ export function MiniMap({
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
+      <p className="mb-1.5 text-xs font-medium text-foreground/80">長崎市中心街</p>
       <svg viewBox="0 0 100 100" className="h-64 w-full">
         <image
           href="/images/kunchi-map.png"
