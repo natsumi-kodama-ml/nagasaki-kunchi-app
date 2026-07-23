@@ -1,5 +1,5 @@
 import { sortedSessions } from "./data";
-import { VENUE_POSITIONS, lerpPosition } from "./geo";
+import { VENUE_POSITIONS, findHubPosition, lerpPosition } from "./geo";
 import { getPatrolStops, jstHour, type PatrolStop } from "./patrol-routes";
 import { sessionEnd, sessionStart, sessionStatus } from "./time";
 import type { Session } from "./types";
@@ -49,10 +49,13 @@ export function getTownTrack(town: string, now: Date): TownTrack {
     const from = VENUE_POSITIONS[prev.venueId] ?? { x: 50, y: 50 };
     const to = VENUE_POSITIONS[next.venueId] ?? { x: 50, y: 50 };
     const patrol = getPatrolStops(town, prev.date, jstHour(now));
+    const hubPosition = patrol
+      .map((p) => findHubPosition(p.route))
+      .find((pos) => pos !== null);
     return {
       town,
       status: "transit",
-      position: lerpPosition(from, to, t),
+      position: hubPosition ?? lerpPosition(from, to, t),
       live: null,
       prev,
       next,
