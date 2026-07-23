@@ -3,27 +3,36 @@ import { VENUES } from "@/lib/data";
 import type { TownTrack } from "@/lib/town-tracker";
 import { cn } from "@/lib/utils";
 
+export function trackKey(t: { town: string; groupLabel: string | null }): string {
+  return `${t.town}-${t.groupLabel ?? ""}`;
+}
+
 export function MiniMap({
   tracks,
   highlightVenueId,
   onSelectVenue,
   mikoshiPosition,
+  selectedTrackKey,
+  onSelectTrack,
 }: {
   tracks: (TownTrack & { color?: "primary" | "accent" | "info" })[];
   highlightVenueId?: string | null;
   onSelectVenue?: (venueId: string) => void;
   mikoshiPosition?: { x: number; y: number } | null;
+  selectedTrackKey?: string | null;
+  onSelectTrack?: (key: string) => void;
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
-      <svg viewBox="0 0 100 100" className="h-56 w-full">
-        <defs>
-          <radialGradient id="mapGlow" cx="50%" cy="30%" r="80%">
-            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="100" height="100" fill="url(#mapGlow)" />
+      <svg viewBox="0 0 100 100" className="h-64 w-full">
+        <image
+          href="/images/kunchi-map.png"
+          x="0"
+          y="0"
+          width="100"
+          height="100"
+          preserveAspectRatio="none"
+        />
 
         {VENUES.map((v) => {
           const pos = VENUE_POSITIONS[v.id];
@@ -45,59 +54,76 @@ export function MiniMap({
                   r={5}
                   fill="none"
                   stroke="var(--primary)"
-                  strokeOpacity="0.4"
-                  strokeWidth="0.8"
+                  strokeOpacity="0.6"
+                  strokeWidth="1"
                 />
               )}
               <circle
                 cx={pos.x}
                 cy={pos.y}
-                r={active ? 3.2 : 2.2}
-                fill={active ? "var(--primary)" : "var(--muted-foreground)"}
+                r={active ? 2.6 : 1.6}
+                fill={active ? "var(--primary)" : "var(--foreground)"}
                 opacity={active ? 1 : 0.5}
               />
-              <text
-                x={pos.x}
-                y={pos.y - 4.5}
-                fontSize="4"
-                fontWeight={active ? 700 : 400}
-                textAnchor="middle"
-                fill={active ? "var(--primary)" : "var(--muted-foreground)"}
-              >
-                {v.name.replace("会場", "")}
-              </text>
             </g>
           );
         })}
 
-        {tracks.map((t) => (
-          <g key={`${t.town}-${t.groupLabel ?? ""}`}>
-            {t.status === "live" && (
+        {tracks.map((t) => {
+          const key = trackKey(t);
+          const selected = key === selectedTrackKey;
+          const fill =
+            t.color === "accent"
+              ? "var(--accent)"
+              : t.color === "info"
+                ? "var(--info)"
+                : "var(--primary)";
+          return (
+            <g
+              key={key}
+              onClick={onSelectTrack ? () => onSelectTrack(key) : undefined}
+              className={onSelectTrack ? "cursor-pointer" : undefined}
+            >
+              {onSelectTrack && (
+                <circle cx={t.position.x} cy={t.position.y} r={6} fill="transparent" />
+              )}
+              {(t.status === "live" || selected) && (
+                <circle
+                  cx={t.position.x}
+                  cy={t.position.y}
+                  r={selected ? 5.5 : 5}
+                  fill="none"
+                  stroke={fill}
+                  strokeOpacity={selected ? 0.8 : 0.5}
+                  strokeWidth={selected ? 1 : 0.8}
+                />
+              )}
               <circle
                 cx={t.position.x}
                 cy={t.position.y}
-                r={5}
-                fill="none"
-                stroke="var(--primary)"
-                strokeOpacity="0.5"
-                strokeWidth="0.8"
+                r={selected ? 3 : 2.4}
+                fill={fill}
+                opacity={t.status === "done" ? 0.4 : 1}
               />
-            )}
-            <circle
-              cx={t.position.x}
-              cy={t.position.y}
-              r={2.4}
-              fill={
-                t.color === "accent"
-                  ? "var(--accent)"
-                  : t.color === "info"
-                    ? "var(--info)"
-                    : "var(--primary)"
-              }
-              opacity={t.status === "done" ? 0.4 : 1}
-            />
-          </g>
-        ))}
+              {selected && (
+                <text
+                  x={t.position.x}
+                  y={t.position.y - 5}
+                  fontSize="3.8"
+                  fontWeight={700}
+                  textAnchor="middle"
+                  fill={fill}
+                  stroke="white"
+                  strokeWidth="3"
+                  style={{ paintOrder: "stroke" }}
+                >
+                  {t.town}
+                  {t.groupLabel ? `(${t.groupLabel})` : ""}
+                </text>
+              )}
+            </g>
+          );
+        })}
 
         {mikoshiPosition && (
           <g>
@@ -125,6 +151,9 @@ export function MiniMap({
               fontWeight={700}
               textAnchor="middle"
               fill="var(--chart-4)"
+              stroke="white"
+              strokeWidth="3"
+              style={{ paintOrder: "stroke" }}
             >
               御神輿
             </text>
@@ -132,7 +161,7 @@ export function MiniMap({
         )}
       </svg>
       <p className="mt-1 text-center text-[10px] text-muted-foreground">
-        地図はイメージです(実際の地理・距離とは異なります)
+        公式の庭先回りMAPを使用。位置は披露時刻・経由地からの推定です
       </p>
     </div>
   );

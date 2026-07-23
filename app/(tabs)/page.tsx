@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { CaretRight, MapPin } from "@phosphor-icons/react";
 import { EVENT, getVenue, sortedSessions } from "@/lib/data";
@@ -21,9 +21,10 @@ import { getMikoshiStatus } from "@/lib/mikoshi";
 import { SessionCard } from "@/components/session-card";
 import { OverviewSheet } from "@/components/overview-sheet";
 import { VenueStatusRow } from "@/components/venue-status-row";
-import { MiniMap, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
+import { MiniMap, trackKey, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
 import { TimeTravelControl } from "@/components/time-travel-control";
 import { Heart } from "@phosphor-icons/react";
+import { cn } from "@/lib/utils";
 
 const TRACK_RANK: Record<string, number> = { live: 0, transit: 1, before: 2, done: 3 };
 
@@ -31,6 +32,7 @@ function HomeContent() {
   const now = useNow();
   const { venueId, setVenueId } = useLocation();
   const { favorites } = useFavorites();
+  const [selectedTrackKey, setSelectedTrackKey] = useState<string | null>(null);
 
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
@@ -88,7 +90,14 @@ function HomeContent() {
           highlightVenueId={venueId}
           onSelectVenue={setVenueId}
           mikoshiPosition={mikoshi.position}
+          selectedTrackKey={selectedTrackKey}
+          onSelectTrack={(key) =>
+            setSelectedTrackKey((prev) => (prev === key ? null : key))
+          }
         />
+        <p className="text-center text-xs text-muted-foreground">
+          踊町のピンをタップすると、どのグループか表示されます
+        </p>
         <VenueStatusRow statuses={statuses} now={now} />
       </section>
 
@@ -110,9 +119,16 @@ function HomeContent() {
             <p className="mt-0.5 text-xs text-muted-foreground">{mikoshi.detail}</p>
           </div>
           {allTracks.map((t) => (
-            <div
-              key={`${t.town}-${t.groupLabel ?? ""}`}
-              className="glow-card rounded-2xl bg-card p-3"
+            <button
+              key={trackKey(t)}
+              type="button"
+              onClick={() =>
+                setSelectedTrackKey((prev) => (prev === trackKey(t) ? null : trackKey(t)))
+              }
+              className={cn(
+                "glow-card w-full rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.98]",
+                selectedTrackKey === trackKey(t) && "ring-2 ring-primary"
+              )}
             >
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
@@ -156,7 +172,7 @@ function HomeContent() {
                 )}
                 {t.status === "done" && "本日の奉納は終了しました"}
               </p>
-            </div>
+            </button>
           ))}
         </div>
       </section>
