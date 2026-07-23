@@ -94,38 +94,55 @@ export default function AboutPage() {
             {TOWN_PROFILES.map((town) => {
               const color = getTownColor(town.name);
               const icons = getPerformanceIcons(town.program);
+              const photo =
+                town.id === "nigiwai"
+                  ? { src: "/images/ebisu-boat-credit.jpg", alt: "恵美須船のような祝船", credit: "Marine-Blue(CC BY-SA 4.0)" }
+                  : town.id === "nishikogawa"
+                    ? { src: "/images/shagiri-credit.jpg", alt: "囃子方(太鼓の演奏)", credit: "Marine-Blue(CC BY-SA 4.0)" }
+                    : null;
               return (
-                <div key={town.id} className="glow-card rounded-xl bg-card p-3">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="flex shrink-0 items-center gap-1 rounded-lg p-1.5"
-                      style={{ backgroundColor: `${color}1a`, color }}
-                    >
-                      {icons.length > 0 ? (
-                        icons.map((icon) => (
-                          <PerformanceIcon key={icon} type={icon} className="h-4 w-4" />
-                        ))
-                      ) : (
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">{town.name}</p>
-                      <p className="truncate text-xs text-muted-foreground">{town.program}</p>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    {town.description}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {town.highlights.map((h) => (
-                      <span
-                        key={h}
-                        className="rounded-full bg-secondary/60 px-2 py-0.5 text-[11px] text-foreground/90"
+                <div key={town.id} className="glow-card overflow-hidden rounded-xl bg-card">
+                  {photo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={photo.src} alt={photo.alt} className="h-28 w-full object-cover" />
+                  )}
+                  <div className="p-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="flex shrink-0 items-center gap-1 rounded-lg p-1.5"
+                        style={{ backgroundColor: `${color}1a`, color }}
                       >
-                        {h}
-                      </span>
-                    ))}
+                        {icons.length > 0 ? (
+                          icons.map((icon) => (
+                            <PerformanceIcon key={icon} type={icon} className="h-4 w-4" />
+                          ))
+                        ) : (
+                          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-foreground">{town.name}</p>
+                        <p className="truncate text-xs text-muted-foreground">{town.program}</p>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                      {town.description}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {town.highlights.map((h) => (
+                        <span
+                          key={h}
+                          className="rounded-full bg-secondary/60 px-2 py-0.5 text-[11px] text-foreground/90"
+                        >
+                          {h}
+                        </span>
+                      ))}
+                    </div>
+                    {photo && (
+                      <p className="mt-1.5 text-[9px] text-muted-foreground/70">
+                        Photo: {photo.credit} via Wikimedia Commons(写真は他地区の同種の演目です)
+                      </p>
+                    )}
                   </div>
                 </div>
               );
