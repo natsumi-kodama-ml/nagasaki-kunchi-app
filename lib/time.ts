@@ -18,6 +18,10 @@ export function sessionStatus(s: Session, now: Date): SessionStatus {
   return "done";
 }
 
+export function minutesUntil(target: Date, now: Date): number {
+  return Math.round((target.getTime() - now.getTime()) / 60000);
+}
+
 export function formatCountdown(target: Date, now: Date): string {
   const diffMs = target.getTime() - now.getTime();
   if (diffMs <= 0) return "";

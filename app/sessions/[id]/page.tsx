@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { CaretLeft, Clock, Heart, MapPin } from "@phosphor-icons/react";
-import { getSession, getVenue } from "@/lib/data";
+import { getSession, getVenue, sortedSessions } from "@/lib/data";
 import {
   formatCountdown,
   formatDateLabel,
@@ -13,6 +13,7 @@ import {
   sessionStart,
   sessionStatus,
 } from "@/lib/time";
+import { getWalkMinutes } from "@/lib/geo";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { LanternGlyph } from "@/components/lantern-glyph";
@@ -31,6 +32,9 @@ function SessionDetailContent() {
   const venue = getVenue(session.venueId);
   const status = now ? sessionStatus(session, now) : "upcoming";
   const active = isFavorite(session.id);
+  const townRoute = sortedSessions().filter(
+    (s) => s.town === session.town && s.date === session.date
+  );
 
   return (
     <div className="mx-auto min-h-screen max-w-md pb-28">
@@ -115,6 +119,52 @@ function SessionDetailContent() {
                   {h}
                 </span>
               ))}
+            </div>
+          </section>
+        )}
+
+        {townRoute.length > 1 && (
+          <section className="space-y-3">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              {session.town}の本日のルート
+            </h2>
+            <div className="glow-card rounded-2xl bg-card p-4">
+              {townRoute.map((stop, i) => {
+                const stopStatus = now ? sessionStatus(stop, now) : "upcoming";
+                const next = townRoute[i + 1];
+                const walk = next ? getWalkMinutes(stop.venueId, next.venueId) : null;
+                return (
+                  <div key={stop.id}>
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={cn(
+                          "mt-1 h-2.5 w-2.5 shrink-0 rounded-full",
+                          stopStatus === "live"
+                            ? "bg-primary"
+                            : stopStatus === "done"
+                              ? "bg-muted-foreground/40"
+                              : "border border-muted-foreground bg-transparent"
+                        )}
+                      />
+                      <div className={cn("flex-1 pb-1", stop.id === session.id && "font-medium")}>
+                        <p
+                          className={cn(
+                            "text-sm",
+                            stopStatus === "done" ? "text-muted-foreground" : "text-foreground/90"
+                          )}
+                        >
+                          {stop.start} {getVenue(stop.venueId)?.name}
+                        </p>
+                      </div>
+                    </div>
+                    {walk !== null && (
+                      <p className="ml-[5px] border-l border-dashed border-muted-foreground/30 py-1 pl-[15px] text-[11px] text-muted-foreground">
+                        徒歩約{walk}分
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}

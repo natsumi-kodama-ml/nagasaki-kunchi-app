@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapPin } from "@phosphor-icons/react";
+import { MapPin, PersonSimpleWalk } from "@phosphor-icons/react";
 import type { VenueStatus } from "@/lib/venue-status";
-import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
+import { formatCountdown, minutesUntil, sessionEnd, sessionStart } from "@/lib/time";
+import { getWalkMinutes } from "@/lib/geo";
 import { useLocation } from "@/lib/location-context";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,12 @@ export function VenueStatusRow({
       <div className="flex gap-2.5 pb-1">
         {statuses.map((status) => {
           const selected = status.venue.id === venueId;
+          const walkMin = venueId ? getWalkMinutes(venueId, status.venue.id) : 0;
+          const reachable =
+            !selected && status.next
+              ? minutesUntil(sessionStart(status.next), now) >= walkMin + 3
+              : null;
+
           return (
             <button
               key={status.venue.id}
@@ -42,6 +49,19 @@ export function VenueStatusRow({
                 <span className="truncate">{status.venue.name}</span>
                 {selected && <span className="ml-auto text-[10px] text-primary">現在地</span>}
               </div>
+
+              {!selected && (
+                <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <PersonSimpleWalk size={12} />
+                  徒歩{walkMin}分
+                  {reachable === true && (
+                    <span className="text-accent">・間に合う</span>
+                  )}
+                  {reachable === false && (
+                    <span className="text-muted-foreground/70">・厳しいかも</span>
+                  )}
+                </div>
+              )}
 
               {status.live ? (
                 <>
