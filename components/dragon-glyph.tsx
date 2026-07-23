@@ -1,46 +1,77 @@
 export function DragonGlyph({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 160 110" fill="none" aria-hidden className={className}>
+    <svg viewBox="0 0 200 170" fill="none" aria-hidden className={className}>
+      {/* flowing mane trailing behind the head */}
       <path
-        d="M8 90 Q26 46 52 68 T96 58 Q112 40 108 58 Q122 44 132 40"
+        d="M6 108 Q46 82 84 92"
         stroke="currentColor"
         strokeWidth="6"
         strokeLinecap="round"
         opacity="0.16"
       />
       <path
-        d="M30 60 L37 47 L42 58"
+        d="M14 130 Q52 104 88 106"
         stroke="currentColor"
-        strokeWidth="3.5"
+        strokeWidth="6"
         strokeLinecap="round"
         opacity="0.16"
       />
       <path
-        d="M58 66 L65 52 L70 63"
+        d="M24 150 Q58 126 92 120"
         stroke="currentColor"
-        strokeWidth="3.5"
+        strokeWidth="6"
         strokeLinecap="round"
         opacity="0.16"
       />
+
+      {/* head + snout silhouette, facing right with open jaw */}
       <path
-        d="M84 60 L91 46 L96 57"
+        d="M84 92
+           C90 62, 118 42, 152 40
+           C168 39, 180 46, 182 58
+           C183 66, 178 72, 170 74
+           L196 84
+           L168 90
+           C172 100, 166 112, 152 116
+           C126 124, 98 118, 86 100
+           Z"
+        fill="currentColor"
+        opacity="0.16"
+      />
+
+      {/* lower fang */}
+      <path
+        d="M170 90 L182 100 L166 98 Z"
+        fill="currentColor"
+        opacity="0.16"
+      />
+
+      {/* horn */}
+      <path
+        d="M148 42 Q160 16 180 6"
         stroke="currentColor"
-        strokeWidth="3.5"
+        strokeWidth="6"
         strokeLinecap="round"
         opacity="0.16"
       />
-      <circle cx="134" cy="38" r="11" fill="currentColor" opacity="0.16" />
+
+      {/* whisker */}
       <path
-        d="M138 30 L146 20 M142 34 L152 28"
+        d="M118 58 Q104 46 88 46"
         stroke="currentColor"
-        strokeWidth="3"
+        strokeWidth="4"
         strokeLinecap="round"
         opacity="0.16"
       />
+
+      {/* eye */}
+      <circle cx="146" cy="62" r="4" fill="currentColor" opacity="0.28" />
+
+      {/* back spikes along the neck */}
       <path
-        d="M144 42 Q150 44 148 49"
+        d="M96 96 L102 84 M110 100 L117 88 M124 102 L131 91"
         stroke="currentColor"
-        strokeWidth="3"
+        strokeWidth="4"
         strokeLinecap="round"
         opacity="0.16"
       />

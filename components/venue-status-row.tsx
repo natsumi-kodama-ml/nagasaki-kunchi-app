@@ -6,6 +6,7 @@ import type { VenueStatus } from "@/lib/venue-status";
 import { formatCountdown, minutesUntil, sessionEnd, sessionStart } from "@/lib/time";
 import { getWalkMinutes } from "@/lib/geo";
 import { useLocation } from "@/lib/location-context";
+import { getVenueColor } from "@/lib/venue-colors";
 import { cn } from "@/lib/utils";
 
 export function VenueStatusRow({
@@ -41,15 +42,13 @@ export function VenueStatusRow({
               onClick={() => setVenueId(status.venue.id)}
               className={cn(
                 "w-[168px] shrink-0 rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.97]",
-                selected ? "glow-primary" : "glow-card"
+                selected ? "glow-primary ring-2 ring-primary" : "glow-card"
               )}
             >
               <div className="flex items-center gap-1.5">
                 <span
-                  className={cn(
-                    "h-2.5 w-2.5 shrink-0 rounded-full",
-                    selected ? "bg-primary" : "bg-muted-foreground"
-                  )}
+                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: getVenueColor(status.venue.id) }}
                 />
                 <span className="truncate text-sm font-semibold text-foreground">
                   {status.venue.name}

@@ -116,9 +116,58 @@ function HomeContent() {
         </div>
 
         {viewMode === "venue" ? (
-          <VenueStatusRow statuses={statuses} now={now} />
+          <div className="space-y-4">
+            <VenueStatusRow statuses={statuses} now={now} />
+
+            {selected && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-primary">
+                  {selected.venue.name}の「今」
+                </h3>
+                {selected.live ? (
+                  <SessionCard session={selected.live} now={now} variant="live" />
+                ) : selected.next ? (
+                  <SessionCard session={selected.next} now={now} />
+                ) : (
+                  <div className="glow-card rounded-2xl bg-card p-5">
+                    <p className="text-sm text-foreground/90">
+                      {selected.venue.name}での奉納はすべて終了しました
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      他の会場を選ぶと、そこでの「今・次」を確認できます
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {upcoming.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-muted-foreground">次の予定</h3>
+                  <Link
+                    href="/sessions"
+                    className="flex items-center gap-0.5 text-xs text-info"
+                  >
+                    すべて見る
+                    <CaretRight size={12} />
+                  </Link>
+                </div>
+                <div className="space-y-3">
+                  {upcoming.map((s) => (
+                    <div key={s.id} className="space-y-1">
+                      <p className="pl-1 text-[11px] text-muted-foreground">
+                        {formatDateLabel(s)}
+                      </p>
+                      <SessionCard session={s} now={now} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="max-h-[380px] space-y-2 overflow-y-auto pr-0.5">
             <div className="glow-card rounded-2xl bg-card p-3">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
@@ -197,53 +246,6 @@ function HomeContent() {
           </div>
         )}
       </section>
-
-      {selected && (
-        <section className="space-y-3">
-          <h2 className="text-sm font-medium text-primary">
-            {selected.venue.name}の「今」
-          </h2>
-          {selected.live ? (
-            <SessionCard session={selected.live} now={now} variant="live" />
-          ) : selected.next ? (
-            <SessionCard session={selected.next} now={now} />
-          ) : (
-            <div className="glow-card rounded-2xl bg-card p-5">
-              <p className="text-sm text-foreground/90">
-                {selected.venue.name}での奉納はすべて終了しました
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                他の会場を選ぶと、そこでの「今・次」を確認できます
-              </p>
-            </div>
-          )}
-        </section>
-      )}
-
-      {upcoming.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-muted-foreground">次の予定</h2>
-            <Link
-              href="/sessions"
-              className="flex items-center gap-0.5 text-xs text-info"
-            >
-              すべて見る
-              <CaretRight size={12} />
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {upcoming.map((s) => (
-              <div key={s.id} className="space-y-1">
-                <p className="pl-1 text-[11px] text-muted-foreground">
-                  {formatDateLabel(s)}
-                </p>
-                <SessionCard session={s} now={now} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       </div>
     </div>

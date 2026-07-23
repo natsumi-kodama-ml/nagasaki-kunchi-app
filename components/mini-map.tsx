@@ -1,6 +1,7 @@
 import { VENUE_POSITIONS } from "@/lib/geo";
 import { VENUES } from "@/lib/data";
 import { getTownColor, TOWN_COLORS } from "@/lib/town-colors";
+import { getVenueColor } from "@/lib/venue-colors";
 import type { TownTrack } from "@/lib/town-tracker";
 import { cn } from "@/lib/utils";
 
@@ -97,8 +98,8 @@ export function MiniMap({
                 cx={pos.x}
                 cy={pos.y}
                 r={active ? 2.6 : 1.6}
-                fill={active ? "var(--primary)" : "var(--foreground)"}
-                opacity={active ? 1 : 0.5}
+                fill={getVenueColor(v.id)}
+                opacity={active ? 1 : 0.7}
               />
             </g>
           );
