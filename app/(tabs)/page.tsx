@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { CaretRight, Info, MapPin } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react";
 import { EVENT, getVenue, sortedSessions } from "@/lib/data";
 import {
   formatCountdown,
@@ -22,6 +22,7 @@ import { SessionCard } from "@/components/session-card";
 import { PageHeader } from "@/components/page-header";
 import { VenueStatusRow } from "@/components/venue-status-row";
 import { MiniMap, trackKey, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
+import { getTownColor } from "@/lib/town-colors";
 import { TimeTravelControl } from "@/components/time-travel-control";
 import { Heart } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ function HomeContent() {
   const { venueId, setVenueId } = useLocation();
   const { favorites } = useFavorites();
   const [selectedTrackKey, setSelectedTrackKey] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"venue" | "town">("venue");
 
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
@@ -41,7 +43,7 @@ function HomeContent() {
   const sessions = sortedSessions();
   const upcoming = sessions
     .filter((s) => sessionStatus(s, now) === "upcoming")
-    .slice(0, 4);
+    .slice(0, 2);
 
   const statuses = getVenueStatuses(now);
   const selected = statuses.find((v) => v.venue.id === venueId) ?? statuses[0];
@@ -63,27 +65,15 @@ function HomeContent() {
 
   return (
     <div>
-      <PageHeader
-        eyebrow="参加者ガイド"
-        title={EVENT.name}
-        action={
-          <Link
-            href="/about"
-            aria-label="長崎くんちとは"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white"
-          >
-            <Info size={20} />
-          </Link>
-        }
-      />
+      <PageHeader eyebrow="参加者ガイド" title={EVENT.name} />
       <div className="space-y-7 px-4 pt-6">
       <TimeTravelControl />
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-sm font-medium text-foreground">会場から選ぶ</h2>
+          <h2 className="text-sm font-medium text-foreground">今、どこで何が</h2>
           <p className="text-xs text-muted-foreground">
-            今いる(または行きたい)会場をタップすると、そこでの「今・次」が下に出ます
+            会場をタップすると「今・次」が下に、踊町のピンをタップするとグループが表示されます
           </p>
         </div>
         <MiniMap
@@ -97,86 +87,115 @@ function HomeContent() {
             setSelectedTrackKey((prev) => (prev === key ? null : key))
           }
         />
-        <p className="text-center text-xs text-muted-foreground">
-          踊町のピンをタップすると、どのグループか表示されます
-        </p>
-        <VenueStatusRow statuses={statuses} now={now} />
-      </section>
 
-      <section className="space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">踊町は今どこ?</h2>
-          <p className="text-xs text-muted-foreground">
-            お気に入りの踊町にはハート印が付きます
-          </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setViewMode("venue")}
+            className={cn(
+              "flex-1 rounded-xl py-1.5 text-xs font-medium",
+              viewMode === "venue"
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-foreground"
+            )}
+          >
+            会場で見る
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("town")}
+            className={cn(
+              "flex-1 rounded-xl py-1.5 text-xs font-medium",
+              viewMode === "town"
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-foreground"
+            )}
+          >
+            踊町で見る
+          </button>
         </div>
-        <div className="space-y-2">
-          <div className="glow-card rounded-2xl bg-card p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-foreground">御神輿(本社神輿)</span>
-              <span className="text-[11px] font-medium" style={{ color: "var(--chart-4)" }}>
-                {mikoshi.label}
-              </span>
-            </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">{mikoshi.detail}</p>
-          </div>
-          {allTracks.map((t) => (
-            <button
-              key={trackKey(t)}
-              type="button"
-              onClick={() =>
-                setSelectedTrackKey((prev) => (prev === trackKey(t) ? null : trackKey(t)))
-              }
-              className={cn(
-                "glow-card w-full rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.98]",
-                selectedTrackKey === trackKey(t) && "ring-2 ring-primary"
-              )}
-            >
+
+        {viewMode === "venue" ? (
+          <VenueStatusRow statuses={statuses} now={now} />
+        ) : (
+          <div className="space-y-2">
+            <div className="glow-card rounded-2xl bg-card p-3">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-                  {t.town}
-                  {t.groupLabel && (
-                    <span className="text-xs text-muted-foreground">({t.groupLabel})</span>
-                  )}
-                  {favoriteTowns.has(t.town) && (
-                    <Heart size={12} weight="fill" className="text-primary" />
-                  )}
+                  <span
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: "var(--gold)" }}
+                  />
+                  御神輿(本社神輿)
                 </span>
-                <span className={trackStatusClassName(t.status)}>
-                  {trackStatusLabel(t.status, t.patrol.length > 0)}
+                <span className="text-[11px] font-medium" style={{ color: "var(--gold)" }}>
+                  {mikoshi.label}
                 </span>
               </div>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {t.status === "live" && t.live && (
-                  <>
-                    {getVenue(t.live.venueId)?.name} で{t.live.title}
-                    (終了まで{formatCountdown(sessionEnd(t.live), now)})
-                  </>
+              <p className="mt-0.5 text-xs text-muted-foreground">{mikoshi.detail}</p>
+            </div>
+            {allTracks.map((t) => (
+              <button
+                key={trackKey(t)}
+                type="button"
+                onClick={() =>
+                  setSelectedTrackKey((prev) => (prev === trackKey(t) ? null : trackKey(t)))
+                }
+                className={cn(
+                  "glow-card w-full rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.98]",
+                  selectedTrackKey === trackKey(t) && "ring-2 ring-primary"
                 )}
-                {t.status === "transit" && (
-                  <>
-                    {t.patrol.length > 0 && (
-                      <>{formatPatrolStops(t.patrol)}を回っています・</>
+              >
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: getTownColor(t.town) }}
+                    />
+                    {t.town}
+                    {t.groupLabel && (
+                      <span className="text-xs text-muted-foreground">({t.groupLabel})</span>
                     )}
-                    {t.next && (
-                      <>
-                        次は{getVenue(t.next.venueId)?.name}(
-                        {formatCountdown(sessionStart(t.next), now)})
-                      </>
+                    {favoriteTowns.has(t.town) && (
+                      <Heart size={12} weight="fill" className="text-primary" />
                     )}
-                  </>
-                )}
-                {t.status === "before" && t.next && (
-                  <>
-                    最初の奉納は{getVenue(t.next.venueId)?.name}(
-                    {formatCountdown(sessionStart(t.next), now)})
-                  </>
-                )}
-                {t.status === "done" && "本日の奉納は終了しました"}
-              </p>
-            </button>
-          ))}
-        </div>
+                  </span>
+                  <span className={trackStatusClassName(t.status)}>
+                    {trackStatusLabel(t.status, t.patrol.length > 0)}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {t.status === "live" && t.live && (
+                    <>
+                      {getVenue(t.live.venueId)?.name} で{t.live.title}
+                      (終了まで{formatCountdown(sessionEnd(t.live), now)})
+                    </>
+                  )}
+                  {t.status === "transit" && (
+                    <>
+                      {t.patrol.length > 0 && (
+                        <>{formatPatrolStops(t.patrol)}を回っています・</>
+                      )}
+                      {t.next && (
+                        <>
+                          次は{getVenue(t.next.venueId)?.name}(
+                          {formatCountdown(sessionStart(t.next), now)})
+                        </>
+                      )}
+                    </>
+                  )}
+                  {t.status === "before" && t.next && (
+                    <>
+                      最初の奉納は{getVenue(t.next.venueId)?.name}(
+                      {formatCountdown(sessionStart(t.next), now)})
+                    </>
+                  )}
+                  {t.status === "done" && "本日の奉納は終了しました"}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {selected && (
@@ -203,9 +222,16 @@ function HomeContent() {
 
       {upcoming.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-medium text-muted-foreground">
-            次の予定(全会場)
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-muted-foreground">次の予定</h2>
+            <Link
+              href="/sessions"
+              className="flex items-center gap-0.5 text-xs text-info"
+            >
+              すべて見る
+              <CaretRight size={12} />
+            </Link>
+          </div>
           <div className="space-y-3">
             {upcoming.map((s) => (
               <div key={s.id} className="space-y-1">
@@ -219,16 +245,6 @@ function HomeContent() {
         </section>
       )}
 
-      <Link
-        href="/venues"
-        className="glow-card flex items-center justify-between rounded-2xl bg-card p-4"
-      >
-        <span className="flex items-center gap-2 text-sm text-foreground">
-          <MapPin size={18} className="text-info" />
-          会場・アクセスを確認する
-        </span>
-        <CaretRight size={16} className="text-muted-foreground" />
-      </Link>
       </div>
     </div>
   );

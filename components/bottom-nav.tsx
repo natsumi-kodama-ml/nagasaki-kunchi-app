@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { href: "/", label: "ホーム", icon: House },
   { href: "/about", label: "概要", icon: Info },
-  { href: "/sessions", label: "一覧", icon: ListBullets },
+  { href: "/sessions", label: "演目", icon: ListBullets },
   { href: "/favorites", label: "お気に入り", icon: Heart },
   { href: "/venues", label: "会場", icon: MapPin },
 ];

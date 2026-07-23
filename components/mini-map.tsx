@@ -25,7 +25,11 @@ export function MiniMap({
   selectedTrackKey?: string | null;
   onSelectTrack?: (key: string) => void;
   showLegend?: boolean;
-  route?: { positions: { x: number; y: number }[]; activeIndex: number; color?: string };
+  route?: {
+    positions: { x: number; y: number; isStop?: boolean }[];
+    activeIndex: number;
+    color?: string;
+  };
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
@@ -52,14 +56,15 @@ export function MiniMap({
         {route &&
           route.positions.map((p, i) => {
             const isActive = i === route.activeIndex;
+            const isWaypoint = p.isStop === false;
             return (
               <circle
                 key={i}
                 cx={p.x}
                 cy={p.y}
-                r={isActive ? 3 : 1.4}
+                r={isActive ? 3 : isWaypoint ? 0.9 : 1.4}
                 fill={route.color ?? "var(--info)"}
-                opacity={isActive ? 1 : 0.4}
+                opacity={isActive ? 1 : isWaypoint ? 0.35 : 0.4}
               />
             );
           })}

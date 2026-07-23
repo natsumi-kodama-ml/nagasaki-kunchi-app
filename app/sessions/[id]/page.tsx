@@ -13,13 +13,13 @@ import {
   sessionStart,
   sessionStatus,
 } from "@/lib/time";
-import { getWalkMinutes, VENUE_POSITIONS } from "@/lib/geo";
+import { findHubPosition, getWalkMinutes, VENUE_POSITIONS } from "@/lib/geo";
 import { formatPatrolStops, getPatrolRangeByHour } from "@/lib/patrol-routes";
 import { getTownTracks } from "@/lib/town-tracker";
 import { getTownColor } from "@/lib/town-colors";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
-import { LanternGlyph } from "@/components/lantern-glyph";
+import { DragonGlyph } from "@/components/dragon-glyph";
 import { MiniMap } from "@/components/mini-map";
 import { cn } from "@/lib/utils";
 
@@ -40,10 +40,31 @@ function SessionDetailContent() {
     (s) => s.town === session.town && s.date === session.date
   );
   const townTracks = now ? getTownTracks(session.town, now) : [];
-  const routePositions = townRoute.map(
-    (s) => VENUE_POSITIONS[s.venueId] ?? { x: 50, y: 50 }
-  );
-  const activeIndex = townRoute.findIndex((s) => s.id === session.id);
+
+  const routePositions: { x: number; y: number; isStop?: boolean }[] = [];
+  let activeIndex = -1;
+  townRoute.forEach((stop, i) => {
+    if (stop.id === session.id) activeIndex = routePositions.length;
+    routePositions.push({
+      ...(VENUE_POSITIONS[stop.venueId] ?? { x: 50, y: 50 }),
+      isStop: true,
+    });
+    const next = townRoute[i + 1];
+    if (next) {
+      const blocks = getPatrolRangeByHour(
+        session.town,
+        stop.date,
+        Number(stop.start.split(":")[0]),
+        Number(next.start.split(":")[0])
+      );
+      blocks.forEach((b) => {
+        b.stops.forEach((s) => {
+          const pos = findHubPosition(s.route);
+          if (pos) routePositions.push({ ...pos, isStop: false });
+        });
+      });
+    }
+  });
 
   return (
     <div className="mx-auto min-h-screen max-w-md pb-28">
@@ -68,7 +89,7 @@ function SessionDetailContent() {
 
       <div className="relative mt-4 overflow-hidden px-4">
         <div className="relative overflow-hidden rounded-2xl bg-card p-5 glow-card">
-          <LanternGlyph className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 text-primary" />
+          <DragonGlyph className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 text-primary" />
           <div className="relative flex items-center gap-2">
             {status === "live" ? (
               <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
@@ -84,7 +105,13 @@ function SessionDetailContent() {
           <h1 className="relative mt-2 font-heading text-2xl font-medium text-foreground">
             {session.title}
           </h1>
-          <p className="relative text-sm text-muted-foreground">{session.town}</p>
+          <p className="relative flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: getTownColor(session.town) }}
+            />
+            {session.town}
+          </p>
 
           <div className="relative mt-4 space-y-2 text-sm text-foreground/90">
             <div className="flex items-center gap-2">

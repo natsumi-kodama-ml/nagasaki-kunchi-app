@@ -10,7 +10,8 @@ import {
   sessionStatus,
 } from "@/lib/time";
 import { FavoriteButton } from "@/components/favorite-button";
-import { LanternGlyph } from "@/components/lantern-glyph";
+import { DragonGlyph } from "@/components/dragon-glyph";
+import { getTownColor } from "@/lib/town-colors";
 import { cn } from "@/lib/utils";
 
 export function SessionCard({
@@ -40,7 +41,7 @@ export function SessionCard({
       )}
     >
       {isLive && (
-        <LanternGlyph className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 text-primary" />
+        <DragonGlyph className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 text-primary" />
       )}
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -62,7 +63,13 @@ export function SessionCard({
           <h3 className="mt-1.5 truncate text-base font-medium text-foreground">
             {session.title}
           </h3>
-          <p className="truncate text-sm text-muted-foreground">{session.town}</p>
+          <p className="flex items-center gap-1.5 truncate text-sm text-muted-foreground">
+            <span
+              className="h-2 w-2 shrink-0 rounded-full"
+              style={{ backgroundColor: getTownColor(session.town) }}
+            />
+            {session.town}
+          </p>
 
           <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
