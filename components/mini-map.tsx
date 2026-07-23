@@ -101,6 +101,21 @@ export function MiniMap({
                 fill={getVenueColor(v.id)}
                 opacity={active ? 1 : 0.7}
               />
+              {active && (
+                <text
+                  x={pos.x}
+                  y={pos.y - 6.5}
+                  fontSize="3.8"
+                  fontWeight={700}
+                  textAnchor="middle"
+                  fill="var(--primary)"
+                  stroke="white"
+                  strokeWidth="3"
+                  style={{ paintOrder: "stroke" }}
+                >
+                  現在地
+                </text>
+              )}
             </g>
           );
         })}
