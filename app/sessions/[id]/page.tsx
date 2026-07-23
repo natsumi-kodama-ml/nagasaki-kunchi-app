@@ -13,9 +13,10 @@ import {
   sessionStart,
   sessionStatus,
 } from "@/lib/time";
-import { getWalkMinutes } from "@/lib/geo";
+import { getWalkMinutes, VENUE_POSITIONS } from "@/lib/geo";
 import { formatPatrolStops, getPatrolRangeByHour } from "@/lib/patrol-routes";
 import { getTownTracks } from "@/lib/town-tracker";
+import { getTownColor } from "@/lib/town-colors";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
 import { LanternGlyph } from "@/components/lantern-glyph";
@@ -39,6 +40,10 @@ function SessionDetailContent() {
     (s) => s.town === session.town && s.date === session.date
   );
   const townTracks = now ? getTownTracks(session.town, now) : [];
+  const routePositions = townRoute.map(
+    (s) => VENUE_POSITIONS[s.venueId] ?? { x: 50, y: 50 }
+  );
+  const activeIndex = townRoute.findIndex((s) => s.id === session.id);
 
   return (
     <div className="mx-auto min-h-screen max-w-md pb-28">
@@ -66,8 +71,7 @@ function SessionDetailContent() {
           <LanternGlyph className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 text-primary" />
           <div className="relative flex items-center gap-2">
             {status === "live" ? (
-              <span className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              <span className="stripe-badge flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold">
                 奉納中
               </span>
             ) : (
@@ -132,7 +136,14 @@ function SessionDetailContent() {
             <h2 className="text-sm font-medium text-muted-foreground">
               {session.town}の本日のルート
             </h2>
-            {townTracks.length > 0 && <MiniMap tracks={townTracks} />}
+            <MiniMap
+              tracks={townTracks}
+              route={{
+                positions: routePositions,
+                activeIndex,
+                color: getTownColor(session.town),
+              }}
+            />
             <div className="glow-card rounded-2xl bg-card p-4">
               {townRoute.map((stop, i) => {
                 const stopStatus = now ? sessionStatus(stop, now) : "upcoming";

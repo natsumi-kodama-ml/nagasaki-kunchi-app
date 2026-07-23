@@ -65,9 +65,10 @@ export function VenueStatusRow({
 
               {status.live ? (
                 <>
-                  <div className="mt-1.5 flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span className="text-[11px] font-medium text-primary">奉納中</span>
+                  <div className="mt-1.5">
+                    <span className="stripe-badge inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                      奉納中
+                    </span>
                   </div>
                   <p className="mt-1 truncate text-sm font-medium text-foreground">
                     {status.live.title}

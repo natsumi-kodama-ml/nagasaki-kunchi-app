@@ -16,6 +16,7 @@ export function MiniMap({
   selectedTrackKey,
   onSelectTrack,
   showLegend,
+  route,
 }: {
   tracks: TownTrack[];
   highlightVenueId?: string | null;
@@ -24,6 +25,7 @@ export function MiniMap({
   selectedTrackKey?: string | null;
   onSelectTrack?: (key: string) => void;
   showLegend?: boolean;
+  route?: { positions: { x: number; y: number }[]; activeIndex: number; color?: string };
 }) {
   return (
     <div className="glow-card overflow-hidden rounded-2xl bg-card p-3">
@@ -36,6 +38,31 @@ export function MiniMap({
           height="100"
           preserveAspectRatio="none"
         />
+
+        {route && route.positions.length > 1 && (
+          <polyline
+            points={route.positions.map((p) => `${p.x},${p.y}`).join(" ")}
+            fill="none"
+            stroke={route.color ?? "var(--info)"}
+            strokeOpacity="0.55"
+            strokeWidth="0.7"
+            strokeDasharray="1.6,1.4"
+          />
+        )}
+        {route &&
+          route.positions.map((p, i) => {
+            const isActive = i === route.activeIndex;
+            return (
+              <circle
+                key={i}
+                cx={p.x}
+                cy={p.y}
+                r={isActive ? 3 : 1.4}
+                fill={route.color ?? "var(--info)"}
+                opacity={isActive ? 1 : 0.4}
+              />
+            );
+          })}
 
         {VENUES.map((v) => {
           const pos = VENUE_POSITIONS[v.id];
