@@ -62,7 +62,7 @@ function HomeContent() {
         <div>
           <h2 className="text-sm font-medium text-foreground">今、どこで何が</h2>
           <p className="text-xs text-muted-foreground">
-            長崎くんちは1日の中で複数の会場を移動しながら演目が奉納されます。今どこで何が行われているか確認できます。
+            長崎くんちは1日の中で複数の会場を移動しながら演目が奉納されます。下で時刻を設定すると、その時間に会場や踊町がどんな状況かをマップと一覧で確認できます。
           </p>
         </div>
 

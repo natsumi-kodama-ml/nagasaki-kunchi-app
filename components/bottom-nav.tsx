@@ -6,9 +6,9 @@ import { House, Info, ListBullets, Heart, MapPin } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
-  { href: "/about", label: "概要", icon: Info },
+  { href: "/about", label: "くんちとは", icon: Info },
   { href: "/venues", label: "会場", icon: MapPin },
-  { href: "/", label: "ホーム", icon: House },
+  { href: "/", label: "実況", icon: House },
   { href: "/sessions", label: "演目", icon: ListBullets },
   { href: "/favorites", label: "お気に入り", icon: Heart },
 ];

@@ -17,9 +17,9 @@ import { findHubPosition, getWalkMinutes, VENUE_POSITIONS } from "@/lib/geo";
 import { formatPatrolStops, getPatrolRangeByHour } from "@/lib/patrol-routes";
 import { getTownTracks } from "@/lib/town-tracker";
 import { getTownColor } from "@/lib/town-colors";
+import { getTownPhoto } from "@/lib/town-photos";
 import { useNow } from "@/lib/use-now";
 import { useFavorites } from "@/lib/favorites-context";
-import { DragonGlyph } from "@/components/dragon-glyph";
 import { MiniMap } from "@/components/mini-map";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,7 @@ function SessionDetailContent() {
   }
 
   const venue = getVenue(session.venueId);
+  const photo = getTownPhoto(session.town);
   const status = now ? sessionStatus(session, now) : "upcoming";
   const active = isFavorite(session.id);
   const townRoute = sortedSessions().filter(
@@ -88,8 +89,17 @@ function SessionDetailContent() {
       </header>
 
       <div className="relative mt-4 overflow-hidden px-4">
-        <div className="relative overflow-hidden rounded-2xl bg-card p-5 glow-card">
-          <DragonGlyph className="pointer-events-none absolute -right-8 -top-10 h-44 w-44 text-primary" />
+        <div className="relative overflow-hidden rounded-2xl bg-card glow-card">
+          {photo && (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={photo.src} alt={photo.alt} className="h-36 w-full object-cover" />
+              <p className="px-5 pt-1.5 text-[9px] text-muted-foreground/70">
+                Photo: {photo.credit} via Wikimedia Commons(写真は他地区の同種の演目です)
+              </p>
+            </>
+          )}
+          <div className="relative p-5 pt-3">
           <div className="relative flex items-center gap-2">
             {status === "live" ? (
               <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
@@ -132,6 +142,7 @@ function SessionDetailContent() {
               <span>{venue?.name}</span>
               <span className="text-xs text-muted-foreground">{venue?.role}</span>
             </div>
+          </div>
           </div>
         </div>
       </div>
