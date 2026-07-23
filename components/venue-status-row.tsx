@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { PersonSimpleWalk } from "@phosphor-icons/react";
+import Link from "next/link";
 import type { VenueStatus } from "@/lib/venue-status";
-import { formatCountdown, minutesUntil, sessionEnd, sessionStart } from "@/lib/time";
-import { getWalkMinutes } from "@/lib/geo";
-import { useLocation } from "@/lib/location-context";
+import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { getVenueColor } from "@/lib/venue-colors";
 import { cn } from "@/lib/utils";
 
@@ -16,40 +13,13 @@ export function VenueStatusRow({
   statuses: VenueStatus[];
   now: Date;
 }) {
-  const { venueId, setVenueId } = useLocation();
-  const originVenue = statuses.find((s) => s.venue.id === venueId)?.venue ?? null;
-
-  useEffect(() => {
-    if (!venueId && statuses.length > 0) {
-      setVenueId(statuses[0].venue.id);
-    }
-  }, [venueId, statuses, setVenueId]);
-
   return (
-    <div className="space-y-1.5">
-      <p className="text-[11px] text-muted-foreground">
-        会場をタップすると「ここにいる」に設定され、他の会場までの徒歩時間が表示されます
-      </p>
-      <div className="-mx-4 overflow-x-auto px-4">
-        <div className="flex gap-2.5 pb-1">
+    <div className="-mx-4 overflow-x-auto px-4">
+      <div className="flex gap-2.5 pb-1">
         {statuses.map((status) => {
-          const selected = status.venue.id === venueId;
-          const walkMin = venueId ? getWalkMinutes(venueId, status.venue.id) : 0;
-          const reachable =
-            !selected && status.next
-              ? minutesUntil(sessionStart(status.next), now) >= walkMin + 3
-              : null;
-
-          return (
-            <button
-              key={status.venue.id}
-              type="button"
-              onClick={() => setVenueId(status.venue.id)}
-              className={cn(
-                "w-[168px] shrink-0 rounded-2xl p-3 text-left transition-transform active:scale-[0.97]",
-                selected ? "glow-primary bg-card ring-2 ring-primary" : "bg-secondary/70"
-              )}
-            >
+          const session = status.live ?? status.next;
+          const content = (
+            <>
               <div className="flex items-center gap-1.5">
                 <span
                   className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -58,27 +28,9 @@ export function VenueStatusRow({
                 <span className="truncate text-sm font-semibold text-foreground">
                   {status.venue.name}
                 </span>
-                {selected && (
-                  <span className="ml-auto shrink-0 text-[10px] font-medium text-primary">
-                    ここにいる
-                  </span>
-                )}
               </div>
 
-              {!selected && (
-                <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <PersonSimpleWalk size={12} />
-                  {originVenue?.name}から徒歩{walkMin}分
-                  {reachable === true && (
-                    <span className="text-accent">・間に合う</span>
-                  )}
-                  {reachable === false && (
-                    <span className="text-muted-foreground/70">・厳しいかも</span>
-                  )}
-                </div>
-              )}
-
-              {selected ? null : status.live ? (
+              {status.live ? (
                 <>
                   <div className="mt-1.5">
                     <span className="inline-block rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
@@ -109,10 +61,24 @@ export function VenueStatusRow({
                   本日の奉納は終了しました
                 </p>
               )}
-            </button>
+            </>
+          );
+
+          const className = cn(
+            "block w-[168px] shrink-0 rounded-2xl bg-card p-3 text-left transition-transform active:scale-[0.97]",
+            status.live ? "glow-primary" : "glow-card"
+          );
+
+          return session ? (
+            <Link key={status.venue.id} href={`/sessions/${session.id}`} className={className}>
+              {content}
+            </Link>
+          ) : (
+            <div key={status.venue.id} className={className}>
+              {content}
+            </div>
           );
         })}
-        </div>
       </div>
     </div>
   );

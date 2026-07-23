@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { FavoritesProvider } from "@/lib/favorites-context";
-import { LocationProvider } from "@/lib/location-context";
 
 export const metadata: Metadata = {
   title: "長崎くんちガイド",
@@ -39,9 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <FavoritesProvider>
-          <LocationProvider>{children}</LocationProvider>
-        </FavoritesProvider>
+        <FavoritesProvider>{children}</FavoritesProvider>
       </body>
     </html>
   );

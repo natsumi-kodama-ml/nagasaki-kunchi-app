@@ -1,24 +1,14 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import Link from "next/link";
-import { CaretRight } from "@phosphor-icons/react";
 import { EVENT, getVenue, sortedSessions } from "@/lib/data";
-import {
-  formatCountdown,
-  formatDateLabel,
-  sessionEnd,
-  sessionStart,
-  sessionStatus,
-} from "@/lib/time";
+import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { useNow } from "@/lib/use-now";
-import { useLocation } from "@/lib/location-context";
 import { useFavorites } from "@/lib/favorites-context";
 import { getVenueStatuses } from "@/lib/venue-status";
 import { getAllTowns, getTownTracks } from "@/lib/town-tracker";
 import { formatPatrolStops } from "@/lib/patrol-routes";
 import { getMikoshiStatus } from "@/lib/mikoshi";
-import { SessionCard } from "@/components/session-card";
 import { PageHeader } from "@/components/page-header";
 import { VenueStatusRow } from "@/components/venue-status-row";
 import { MiniMap, trackKey, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
@@ -31,7 +21,6 @@ const TRACK_RANK: Record<string, number> = { live: 0, transit: 1, before: 2, don
 
 function HomeContent() {
   const now = useNow();
-  const { venueId, setVenueId } = useLocation();
   const { favorites } = useFavorites();
   const [selectedTrackKey, setSelectedTrackKey] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"venue" | "town">("venue");
@@ -41,12 +30,7 @@ function HomeContent() {
   }
 
   const sessions = sortedSessions();
-  const upcoming = sessions
-    .filter((s) => sessionStatus(s, now) === "upcoming")
-    .slice(0, 2);
-
   const statuses = getVenueStatuses(now);
-  const selected = statuses.find((v) => v.venue.id === venueId) ?? statuses[0];
 
   const favoriteTowns = new Set(
     sessions.filter((s) => favorites.has(s.id)).map((s) => s.town)
@@ -78,8 +62,6 @@ function HomeContent() {
         </div>
         <MiniMap
           tracks={allTracks}
-          highlightVenueId={venueId}
-          onSelectVenue={setVenueId}
           mikoshiPosition={mikoshi.position}
           selectedTrackKey={selectedTrackKey}
           showLegend
@@ -116,58 +98,7 @@ function HomeContent() {
         </div>
 
         {viewMode === "venue" ? (
-          <div className="glow-card space-y-3 rounded-2xl bg-card p-3">
-            <VenueStatusRow statuses={statuses} now={now} />
-
-            {selected && (
-              <div className="space-y-2 border-t border-border pt-3">
-                <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  ↑ ここにいる{selected.venue.name}の様子
-                </p>
-                {selected.live ? (
-                  <SessionCard session={selected.live} now={now} variant="live" />
-                ) : selected.next ? (
-                  <SessionCard session={selected.next} now={now} />
-                ) : (
-                  <div className="rounded-2xl bg-secondary/60 p-4">
-                    <p className="text-sm text-foreground/90">
-                      {selected.venue.name}での奉納はすべて終了しました
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      他の会場をタップすると、そこでの「今・次」を確認できます
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {upcoming.length > 0 && (
-              <div className="space-y-3 border-t border-border pt-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[11px] text-muted-foreground">
-                    ほかの会場の次の予定
-                  </h3>
-                  <Link
-                    href="/sessions"
-                    className="flex items-center gap-0.5 text-xs text-info"
-                  >
-                    すべて見る
-                    <CaretRight size={12} />
-                  </Link>
-                </div>
-                <div className="space-y-3">
-                  {upcoming.map((s) => (
-                    <div key={s.id} className="space-y-1">
-                      <p className="pl-1 text-[11px] text-muted-foreground">
-                        {formatDateLabel(s)}
-                      </p>
-                      <SessionCard session={s} now={now} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <VenueStatusRow statuses={statuses} now={now} />
         ) : (
           <div className="max-h-[380px] space-y-2 overflow-y-auto pr-0.5">
             <div className="glow-card rounded-2xl bg-card p-3">
