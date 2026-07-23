@@ -7,6 +7,11 @@ import { PageHeader } from "@/components/page-header";
 const TIP_ICONS = [MapPin, Megaphone, Umbrella, Sparkle, CloudRain];
 
 const TOWN_PHOTOS: Record<string, { src: string; alt: string; credit: string }> = {
+  suwamachi: {
+    src: "/images/dragon-dance-credit.jpg",
+    alt: "龍踊(じゃおどり)",
+    credit: "Marine-Blue(CC BY-SA 3.0)",
+  },
   shinbashi: {
     src: "/images/dance-credit.jpg",
     alt: "本踊のような奉納踊り",
