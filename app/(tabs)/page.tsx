@@ -4,29 +4,29 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { CaretRight, MapPin } from "@phosphor-icons/react";
 import { EVENT, sortedSessions } from "@/lib/data";
-import { formatCountdown, formatDateLabel, sessionStart, sessionStatus } from "@/lib/time";
+import { formatDateLabel, sessionStatus } from "@/lib/time";
 import { useNow } from "@/lib/use-now";
+import { useLocation } from "@/lib/location-context";
+import { getVenueStatuses } from "@/lib/venue-status";
 import { SessionCard } from "@/components/session-card";
 import { OverviewSheet } from "@/components/overview-sheet";
-import { LanternGlyph } from "@/components/lantern-glyph";
+import { VenueStatusRow } from "@/components/venue-status-row";
 
 function HomeContent() {
   const now = useNow();
+  const { venueId } = useLocation();
 
   if (!now) {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
   }
 
   const sessions = sortedSessions();
-  const withStatus = sessions.map((s) => ({ s, status: sessionStatus(s, now) }));
-  const live = withStatus.filter((x) => x.status === "live").map((x) => x.s);
-  const upcoming = withStatus
-    .filter((x) => x.status === "upcoming")
-    .map((x) => x.s)
+  const upcoming = sessions
+    .filter((s) => sessionStatus(s, now) === "upcoming")
     .slice(0, 4);
-  const allDone = withStatus.every((x) => x.status === "done");
-  const firstSession = sessions[0];
-  const beforeEventStarts = now < sessionStart(firstSession);
+
+  const statuses = getVenueStatuses(now);
+  const selected = statuses.find((v) => v.venue.id === venueId) ?? statuses[0];
 
   return (
     <div className="safe-top space-y-7 px-4 pt-6">
@@ -40,43 +40,43 @@ function HomeContent() {
         <OverviewSheet />
       </header>
 
-      {live.length > 0 && (
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">会場から選ぶ</h2>
+          <p className="text-xs text-muted-foreground">
+            今いる(または行きたい)会場をタップすると、そこでの「今・次」が下に出ます
+          </p>
+        </div>
+        <VenueStatusRow statuses={statuses} now={now} />
+      </section>
+
+      {selected && (
         <section className="space-y-3">
-          <h2 className="text-sm font-medium text-primary">今、奉納中</h2>
-          <div className="space-y-3">
-            {live.map((s) => (
-              <SessionCard key={s.id} session={s} now={now} variant="live" />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {live.length === 0 && beforeEventStarts && (
-        <section className="glow-primary relative space-y-2 overflow-hidden rounded-2xl bg-card p-5">
-          <LanternGlyph className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 text-accent" />
-          <p className="relative text-xs text-muted-foreground">開催まで</p>
-          <p className="relative font-heading text-3xl font-medium text-primary">
-            {formatCountdown(sessionStart(firstSession), now) || "本日開催"}
-          </p>
-          <p className="relative text-sm text-foreground/90">{EVENT.period}</p>
-          <p className="relative text-xs text-muted-foreground">
-            開催期間中はここに「今、奉納中」の演目が表示されます
-          </p>
-        </section>
-      )}
-
-      {live.length === 0 && !beforeEventStarts && allDone && (
-        <section className="glow-card space-y-1 rounded-2xl bg-card p-5">
-          <p className="font-heading text-lg font-medium text-foreground">
-            今年の奉納は終了しました
-          </p>
-          <p className="text-sm text-muted-foreground">来年の開催をお楽しみに。</p>
+          <h2 className="text-sm font-medium text-primary">
+            {selected.venue.name}の「今」
+          </h2>
+          {selected.live ? (
+            <SessionCard session={selected.live} now={now} variant="live" />
+          ) : selected.next ? (
+            <SessionCard session={selected.next} now={now} />
+          ) : (
+            <div className="glow-card rounded-2xl bg-card p-5">
+              <p className="text-sm text-foreground/90">
+                {selected.venue.name}での奉納はすべて終了しました
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                他の会場を選ぶと、そこでの「今・次」を確認できます
+              </p>
+            </div>
+          )}
         </section>
       )}
 
       {upcoming.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-medium text-muted-foreground">次の予定</h2>
+          <h2 className="text-sm font-medium text-muted-foreground">
+            次の予定(全会場)
+          </h2>
           <div className="space-y-3">
             {upcoming.map((s) => (
               <div key={s.id} className="space-y-1">
