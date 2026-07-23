@@ -55,7 +55,7 @@ export function VenueStatusRow({
                 </span>
                 {selected && (
                   <span className="ml-auto shrink-0 text-[10px] font-medium text-primary">
-                    現在地
+                    出発地
                   </span>
                 )}
               </div>
@@ -63,7 +63,7 @@ export function VenueStatusRow({
               {!selected && (
                 <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
                   <PersonSimpleWalk size={12} />
-                  現在地から徒歩{walkMin}分
+                  出発地から徒歩{walkMin}分
                   {reachable === true && (
                     <span className="text-accent">・間に合う</span>
                   )}

@@ -113,7 +113,7 @@ export function MiniMap({
                   strokeWidth="3"
                   style={{ paintOrder: "stroke" }}
                 >
-                  現在地
+                  出発地
                 </text>
               )}
             </g>
