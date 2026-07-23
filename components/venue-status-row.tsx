@@ -63,7 +63,7 @@ export function VenueStatusRow({
               {!selected && (
                 <div className="mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
                   <PersonSimpleWalk size={12} />
-                  徒歩{walkMin}分
+                  現在地から徒歩{walkMin}分
                   {reachable === true && (
                     <span className="text-accent">・間に合う</span>
                   )}
