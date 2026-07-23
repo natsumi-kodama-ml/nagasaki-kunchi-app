@@ -56,7 +56,7 @@ function HomeContent() {
 
   return (
     <div>
-      <PageHeader eyebrow="参加者ガイド" title={`2025年${EVENT.name}`} />
+      <PageHeader eyebrow="参加者ガイド" title={EVENT.name} />
       <div className="space-y-7 px-4 pt-6">
       <section className="space-y-3">
         <div>
@@ -72,6 +72,9 @@ function HomeContent() {
           <MiniMap
             tracks={allTracks}
             highlightVenueId={highlightedVenueId}
+            onSelectVenue={(id) =>
+              setHighlightedVenueId((prev) => (prev === id ? null : id))
+            }
             mikoshiPosition={mikoshi.position}
             selectedTrackKey={selectedTrackKey}
             showLegend

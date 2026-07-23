@@ -40,7 +40,7 @@ function FavoritesContent() {
       ) : (
         <>
           <p className="text-xs text-muted-foreground">
-            お気に入りの踊町が今どこにいるかは、ホームのマップで確認できます
+            お気に入りの踊町が今どこにいるかは、実況のマップで確認できます
           </p>
           <div className="space-y-3">
             {sessions.map((s) => (
