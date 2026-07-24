@@ -6,9 +6,9 @@ import { CaretDown, CaretUp, Clock } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const DAYS = [
-  { date: "2026-10-07", label: "10/7(水)" },
-  { date: "2026-10-08", label: "10/8(木)" },
-  { date: "2026-10-09", label: "10/9(金)" },
+  { date: "2025-10-07", label: "10/7(火)" },
+  { date: "2025-10-08", label: "10/8(水)" },
+  { date: "2025-10-09", label: "10/9(木)" },
 ];
 
 const MIN_MINUTES = 6 * 60; // 6:00

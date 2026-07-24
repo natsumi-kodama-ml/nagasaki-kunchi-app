@@ -1,13 +1,12 @@
 // 令和7年(2025年)長崎くんち踊町庭先回りスケジュール(長崎伝統芸能振興会 公式PDF)より、
 // ○印(本場所)以外の庭先回り(商店・企業・個人宅などへの呈上まわり)の経由地テキストを抜粋。
-// 日付は導線確認用に2026年10月7日〜9日に読み替えている。
 // 一部の踊町は複数グループ(花組/月組、もみじ組/松組、櫓日/櫓月など)に分かれて同時に別ルートを回る。
 
 export type PatrolStop = { group: string | null; route: string };
 
 // PATROL_ROUTES[date][town][hour] = そのhour台(hour:00〜hour:59)の庭先回り経由地
 export const PATROL_ROUTES: Record<string, Record<string, Record<string, PatrolStop[]>>> = {
-  "2026-10-07": {
+  "2025-10-07": {
     "新橋町": {
       "10": [
         { group: "花", route: "ゆめタウン夢彩都→元船町" },
@@ -150,7 +149,7 @@ export const PATROL_ROUTES: Record<string, Record<string, Record<string, PatrolS
     },
   },
 
-  "2026-10-08": {
+  "2025-10-08": {
     "西古川町": {
       "9": [
         { group: "本踊", route: "魚の町→市役所" },
@@ -335,7 +334,7 @@ export const PATROL_ROUTES: Record<string, Record<string, Record<string, PatrolS
     },
   },
 
-  "2026-10-09": {
+  "2025-10-09": {
     "榎津町": {
       "9": [{ group: null, route: "松森天満宮→新大工町→新大工町商店街" }],
       "10": [{ group: null, route: "上長崎地区ふれあいセンター→伊勢町→伊勢宮神社→出来大工町" }],
