@@ -36,8 +36,7 @@ export function SessionCard({
       href={`/sessions/${session.id}`}
       className={cn(
         "relative block overflow-hidden rounded-2xl bg-card p-4 transition-transform active:scale-[0.98]",
-        isLive ? "glow-primary" : "glow-card",
-        isDone && "opacity-55"
+        isLive ? "glow-primary" : "glow-card"
       )}
     >
       {isLive && (
