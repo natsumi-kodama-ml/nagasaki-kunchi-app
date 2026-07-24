@@ -1,10 +1,9 @@
 "use client";
 
 import { Suspense, useRef, useState } from "react";
-import { EVENT, getVenue, sortedSessions } from "@/lib/data";
+import { EVENT, getVenue } from "@/lib/data";
 import { formatCountdown, sessionEnd, sessionStart } from "@/lib/time";
 import { useNow } from "@/lib/use-now";
-import { useFavorites } from "@/lib/favorites-context";
 import { getVenueStatuses } from "@/lib/venue-status";
 import { getAllTowns, getTownTracks } from "@/lib/town-tracker";
 import { formatPatrolStops } from "@/lib/patrol-routes";
@@ -14,14 +13,12 @@ import { VenueStatusRow } from "@/components/venue-status-row";
 import { MiniMap, trackKey, trackStatusClassName, trackStatusLabel } from "@/components/mini-map";
 import { getTownColor } from "@/lib/town-colors";
 import { TimeTravelControl } from "@/components/time-travel-control";
-import { Heart } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const TRACK_RANK: Record<string, number> = { live: 0, transit: 1, before: 2, done: 3 };
 
 function HomeContent() {
   const now = useNow();
-  const { favorites } = useFavorites();
   const [selectedTrackKey, setSelectedTrackKey] = useState<string | null>(null);
   const [highlightedVenueId, setHighlightedVenueId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"venue" | "town">("venue");
@@ -36,12 +33,8 @@ function HomeContent() {
     return <div className="px-4 pt-8 text-sm text-muted-foreground">読み込み中…</div>;
   }
 
-  const sessions = sortedSessions();
   const statuses = getVenueStatuses(now);
 
-  const favoriteTowns = new Set(
-    sessions.filter((s) => favorites.has(s.id)).map((s) => s.town)
-  );
   const allTracks = getAllTowns()
     .flatMap((town) => getTownTracks(town, now))
     .sort((a, b) => {
@@ -119,7 +112,7 @@ function HomeContent() {
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
                   <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="h-2 w-2 shrink-0 rotate-45"
                     style={{ backgroundColor: "var(--gold)" }}
                   />
                   御神輿(本社神輿)
@@ -151,9 +144,6 @@ function HomeContent() {
                     {t.town}
                     {t.groupLabel && (
                       <span className="text-xs text-muted-foreground">({t.groupLabel})</span>
-                    )}
-                    {favoriteTowns.has(t.town) && (
-                      <Heart size={12} weight="fill" className="text-primary" />
                     )}
                   </span>
                   <span className={trackStatusClassName(t.status)}>
