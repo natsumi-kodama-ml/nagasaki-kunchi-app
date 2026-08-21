@@ -12,6 +12,7 @@ import {
 import { FavoriteButton } from "@/components/favorite-button";
 import { DragonGlyph } from "@/components/dragon-glyph";
 import { getTownColor } from "@/lib/town-colors";
+import { getTownPhoto } from "@/lib/town-photos";
 import { cn } from "@/lib/utils";
 
 export function SessionCard({
@@ -24,6 +25,7 @@ export function SessionCard({
   variant?: "default" | "live";
 }) {
   const venue = getVenue(session.venueId);
+  const photo = getTownPhoto(session.town);
   const status = variant === "live" ? "live" : sessionStatus(session, now);
   const isLive = status === "live";
   const isDone = status === "done";
@@ -42,7 +44,15 @@ export function SessionCard({
       {isLive && (
         <DragonGlyph className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 text-primary" />
       )}
-      <div className="relative flex items-start justify-between gap-3">
+      <div className="relative flex items-start gap-3">
+        {photo && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            className="h-16 w-16 shrink-0 rounded-xl object-cover"
+          />
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             {isLive ? (
